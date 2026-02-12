@@ -53,6 +53,7 @@ compile_commands.json
 
 *_qmlcache.qrc
 
+src/build/*
 
 # General
 .DS_Store
