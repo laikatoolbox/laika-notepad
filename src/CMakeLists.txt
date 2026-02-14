@@ -30,6 +30,7 @@ qt_add_executable(laika-notepad
     shared/PreferencesStore.h
     Theme.h Theme.cpp
 )
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 qt_add_translations(laika-notepad)
 qt_add_lupdate(

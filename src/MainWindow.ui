@@ -28,7 +28,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QPlainTextEdit" name="plainTextEdit"/>
+     <widget class="LaikaNotepad::TextEdit" name="plainTextEdit"/>
     </item>
    </layout>
   </widget>
@@ -137,6 +137,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LaikaNotepad::TextEdit</class>
+   <extends>QPlainTextEdit</extends>
+   <header>TextEdit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
