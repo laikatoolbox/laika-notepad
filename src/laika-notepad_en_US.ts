@@ -5,7 +5,7 @@
     <name>MainWindow</name>
     <message>
         <location filename="mainwindow.ui" line="14"/>
-        <source>MainWindow</source>
+        <source>Laika Notepad</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
