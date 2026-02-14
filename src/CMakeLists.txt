@@ -15,16 +15,20 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 set(TS_FILES laika-notepad_en_US.ts)
 
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
+    Main.cpp
+        MainWindow.cpp
+        MainWindow.h
+        MainWindow.ui
         ${TS_FILES}
 )
 
 qt_add_executable(laika-notepad
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
+    TextEdit.h TextEdit.cpp
+    LineNumberArea.h
+    shared/PreferencesStore.h
+    Theme.h Theme.cpp
 )
 qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 qt_add_translations(laika-notepad)
