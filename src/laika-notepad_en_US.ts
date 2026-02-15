@@ -14,73 +14,98 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="52"/>
+        <location filename="MainWindow.ui" line="58"/>
         <source>&amp;Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="64"/>
+        <location filename="MainWindow.ui" line="70"/>
         <source>&amp;View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="74"/>
+        <location filename="MainWindow.ui" line="80"/>
         <source>&amp;Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="86"/>
-        <source>New</source>
+        <location filename="MainWindow.ui" line="92"/>
+        <source>toolBar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="91"/>
+        <location filename="MainWindow.ui" line="104"/>
+        <source>&amp;New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="109"/>
         <source>&amp;About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="96"/>
+        <location filename="MainWindow.ui" line="114"/>
         <source>Themes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="101"/>
+        <location filename="MainWindow.ui" line="119"/>
         <source>Preferences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="106"/>
+        <location filename="MainWindow.ui" line="124"/>
         <source>Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="111"/>
+        <location filename="MainWindow.ui" line="129"/>
         <source>Redo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="116"/>
+        <location filename="MainWindow.ui" line="134"/>
         <source>Select All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="121"/>
+        <location filename="MainWindow.ui" line="139"/>
         <source>Deselect All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="126"/>
+        <location filename="MainWindow.ui" line="144"/>
         <source>Word Wrap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="131"/>
+        <location filename="MainWindow.ui" line="149"/>
         <source>Line Numbers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="136"/>
+        <location filename="MainWindow.ui" line="154"/>
         <source>Find/Replace</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="159"/>
+        <source>&amp;Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="164"/>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="169"/>
+        <source>Save As...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="174"/>
+        <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
