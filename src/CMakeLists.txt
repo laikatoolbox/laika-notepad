@@ -6,7 +6,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
@@ -29,6 +29,7 @@ qt_add_executable(laika-notepad
     LineNumberArea.h
     shared/PreferencesStore.h
     Theme.h Theme.cpp
+
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})

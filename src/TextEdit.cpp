@@ -18,14 +18,8 @@ LaikaNotepad::TextEdit::TextEdit(QWidget *parent) : QPlainTextEdit(parent)
 
 int LaikaNotepad::TextEdit::lineNumberAreaWidth()
 {
-    int digits = 1;
-    int max = qMax(1, blockCount());
-    while (max >= 10) {
-        max /= 10;
-        ++digits;
-    }
-
-    int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits;
+    auto digits = std::max(numDigits(blockCount()), 2);
+    int space = lineNumberPaddding*2 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits;
 
     return space;
 }
@@ -58,21 +52,7 @@ void LaikaNotepad::TextEdit::resizeEvent(QResizeEvent *e)
 
 void LaikaNotepad::TextEdit::highlightCurrentLine()
 {
-    QList<QTextEdit::ExtraSelection> extraSelections;
-
-    if (!isReadOnly()) {
-        QTextEdit::ExtraSelection selection;
-
-        QColor lineColor = QColor(Qt::yellow).lighter(160);
-
-        selection.format.setBackground(lineColor);
-        selection.format.setProperty(QTextFormat::FullWidthSelection, true);
-        selection.cursor = textCursor();
-        selection.cursor.clearSelection();
-        extraSelections.append(selection);
-    }
-
-    setExtraSelections(extraSelections);
+    this->repaint();
 }
 
 void LaikaNotepad::TextEdit::lineNumberAreaPaintEvent(QPaintEvent *event)
@@ -84,12 +64,22 @@ void LaikaNotepad::TextEdit::lineNumberAreaPaintEvent(QPaintEvent *event)
     int blockNumber = block.blockNumber();
     int top = qRound(blockBoundingGeometry(block).translated(contentOffset()).top());
     int bottom = top + qRound(blockBoundingRect(block).height());
+    QFont font = painter.font();
 
     while (block.isValid() && top <= event->rect().bottom()) {
         if (block.isVisible() && bottom >= event->rect().top()) {
-            QString number = QString::number(blockNumber + 1);
-            painter.setPen(Qt::black);
-            painter.drawText(0, top, lineNumberArea->width(), fontMetrics().height(),
+            QString number = QString::number(blockNumber + 1);            
+            bool isCurrentBlock = this->textCursor().blockNumber() == blockNumber;
+            if (isCurrentBlock) {
+                painter.setPen(Qt::red);
+                font.setBold(true);
+                painter.setFont(font);
+            } else {
+                font.setBold(false);
+                painter.setFont(font);
+                painter.setPen(Qt::black);
+            }
+            painter.drawText(0, top, lineNumberArea->width() - lineNumberPaddding, fontMetrics().height(),
                              Qt::AlignRight, number);
         }
 
@@ -98,4 +88,17 @@ void LaikaNotepad::TextEdit::lineNumberAreaPaintEvent(QPaintEvent *event)
         bottom = top + qRound(blockBoundingRect(block).height());
         ++blockNumber;
     }
+}
+
+void LaikaNotepad::TextEdit::keyPressEvent(QKeyEvent *event)
+{
+    QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+
+    // make SHIFT + Enter be a plain newline character
+    auto modifiers = keyEvent->modifiers();
+    if ((modifiers & Qt::ShiftModifier) && (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return)) {
+        event->setModifiers(modifiers & ~Qt::ShiftModifier);
+    }
+
+    QPlainTextEdit::keyPressEvent(event);
 }
