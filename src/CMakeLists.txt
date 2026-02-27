@@ -29,6 +29,8 @@ qt_add_executable(laika-notepad
     LineNumberArea.h
     shared/PreferencesStore.h
     Theme.h Theme.cpp
+    AboutDialog.h AboutDialog.cpp AboutDialog.ui
+
 
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

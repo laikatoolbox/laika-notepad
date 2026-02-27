@@ -2,6 +2,14 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en_US">
 <context>
+    <name>AboutDialog</name>
+    <message>
+        <location filename="AboutDialog.ui" line="14"/>
+        <source>About</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <location filename="MainWindow.ui" line="14"/>
