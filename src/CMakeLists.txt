@@ -30,6 +30,7 @@ qt_add_executable(laika-notepad
     shared/PreferencesStore.h
     Theme.h Theme.cpp
     AboutDialog.h AboutDialog.cpp AboutDialog.ui
+    Images.qrc
 
 
 )
