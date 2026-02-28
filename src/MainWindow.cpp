@@ -9,6 +9,7 @@
 #include <QLocale>
 #include <QClipboard>
 #include <QFontDatabase>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -218,5 +219,11 @@ void MainWindow::on_actionDeselect_All_triggered()
     QTextCursor cursor = ui->plainTextEdit->textCursor();
     cursor.clearSelection();
     ui->plainTextEdit->setTextCursor(cursor);
+}
+
+
+void MainWindow::on_actionAbout_QT_triggered()
+{
+    QMessageBox::aboutQt(this);
 }
 

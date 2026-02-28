@@ -55,6 +55,8 @@ private slots:
 
     void on_actionDeselect_All_triggered();
 
+    void on_actionAbout_QT_triggered();
+
 private:
     Ui::MainWindow *ui;
     QLabel *manuallyRefreshedLabel = nullptr;
