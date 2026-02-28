@@ -109,7 +109,7 @@ void MainWindow::updateStats()
         int size = text.size();
         int wordCount = 0;
         int lineCount = 1;
-        bool isPrevWhitespace = ' ';
+        bool isPrevWhitespace = false;
 
         for(unsigned int i = 0; i < size; i++)
         {
