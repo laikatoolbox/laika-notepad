@@ -57,6 +57,20 @@ private slots:
 
     void on_actionAbout_QT_triggered();
 
+    void on_actionUndo_triggered();
+
+    void on_actionRedo_triggered();
+
+    void on_action_Copy_triggered();
+
+    void on_actionPaste_triggered();
+
+    void on_actionCut_triggered();
+
+    void undoAvailable(bool canUndo);
+
+    void redoAvailable(bool canRedo);
+
 private:
     Ui::MainWindow *ui;
     QLabel *manuallyRefreshedLabel = nullptr;

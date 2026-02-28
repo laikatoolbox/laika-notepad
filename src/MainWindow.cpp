@@ -15,11 +15,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     ui->setupUi(this);
 
-    // Load settings
+    // load settings
     this->ui->actionLine_Numbers->setChecked(LaikaSettings::showLineNumbers);
     this->ui->actionWord_Wrap->setChecked(LaikaSettings::wordWrap);
     this->ui->actionAuto_Refresh_Text_Stats->setChecked(LaikaSettings::autoRefreshTextStats);
     this->ui->actionStatus_Bar->setChecked(LaikaSettings::showStatusBar);
+
+    // set up undo/redo
+    connect(ui->plainTextEdit, SIGNAL(undoAvailable(bool)), this, SLOT(undoAvailable(bool)));
+    connect(ui->plainTextEdit, SIGNAL(redoAvailable(bool)), this, SLOT(redoAvailable(bool)));
+    this->ui->actionUndo->setEnabled(false);
+    this->ui->actionRedo->setEnabled(false);
 
     // set up statusbar
     manuallyRefreshedLabel = new QLabel(this);
@@ -81,7 +87,7 @@ void MainWindow::on_plainTextEdit_textChanged()
 }
 
 void MainWindow::settingsChanged()
-{    
+{
     ui->plainTextEdit->setShowLineNumbers(LaikaSettings::showLineNumbers);
     ui->plainTextEdit->setWordWrapMode(LaikaSettings::wordWrap ? QTextOption::WrapMode::WordWrap : QTextOption::WrapMode::NoWrap);
     ui->statusbar->setVisible(LaikaSettings::showStatusBar);
@@ -227,3 +233,43 @@ void MainWindow::on_actionAbout_QT_triggered()
     QMessageBox::aboutQt(this);
 }
 
+
+void MainWindow::on_actionUndo_triggered()
+{
+    ui->plainTextEdit->undo();
+}
+
+
+void MainWindow::on_actionRedo_triggered()
+{
+    ui->plainTextEdit->redo();
+}
+
+
+void MainWindow::on_action_Copy_triggered()
+{
+    ui->plainTextEdit->copy();
+}
+
+
+void MainWindow::on_actionPaste_triggered()
+{
+    ui->plainTextEdit->paste();
+}
+
+
+void MainWindow::on_actionCut_triggered()
+{
+    ui->plainTextEdit->cut();
+}
+
+
+void MainWindow::undoAvailable(bool canUndo)
+{
+    this->ui->actionUndo->setEnabled(canUndo);
+}
+
+void MainWindow::redoAvailable(bool canRedo)
+{
+    this->ui->actionRedo->setEnabled(canRedo);
+}
