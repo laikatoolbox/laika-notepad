@@ -206,3 +206,17 @@ void MainWindow::on_action_Reset_Zoom_triggered()
     ui->plainTextEdit->setFont(font);
 }
 
+
+void MainWindow::on_actionSelect_All_triggered()
+{
+    ui->plainTextEdit->selectAll();
+}
+
+
+void MainWindow::on_actionDeselect_All_triggered()
+{
+    QTextCursor cursor = ui->plainTextEdit->textCursor();
+    cursor.clearSelection();
+    ui->plainTextEdit->setTextCursor(cursor);
+}
+

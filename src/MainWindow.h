@@ -51,6 +51,10 @@ private slots:
 
     void on_action_Reset_Zoom_triggered();
 
+    void on_actionSelect_All_triggered();
+
+    void on_actionDeselect_All_triggered();
+
 private:
     Ui::MainWindow *ui;
     QLabel *manuallyRefreshedLabel = nullptr;
