@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Concurrent)
 
 set(TS_FILES laika-notepad_en_US.ts)
 
@@ -27,13 +27,12 @@ qt_add_executable(laika-notepad
     ${PROJECT_SOURCES}
     TextEdit.h TextEdit.cpp
     LineNumberArea.h
-    shared/PreferencesStore.h
-    Theme.h Theme.cpp
+    settings/SettingsStore.h
+    settings/Theme.h settings/Theme.cpp
     AboutDialog.h AboutDialog.cpp AboutDialog.ui
     Images.qrc
     SettingsDialog.h SettingsDialog.cpp SettingsDialog.ui
-
-
+    TextStats.h
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
@@ -45,6 +44,7 @@ qt_add_lupdate(
 add_dependencies(laika-notepad update_translations)
 
 target_link_libraries(laika-notepad PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(laika-notepad PRIVATE Qt${QT_VERSION_MAJOR}::Concurrent)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
