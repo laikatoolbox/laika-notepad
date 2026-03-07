@@ -77,6 +77,12 @@ private slots:
 
     void on_actionNew_From_Clipboard_triggered();
 
+    void on_plainTextEdit_modificationChanged(bool arg1);
+
+    void on_actionLock_Toolbars_changed();
+
+    void on_actionOpen_triggered();
+
 private:
     Ui::MainWindow *ui;
     QString fileName = "";
@@ -90,7 +96,8 @@ private:
     void settingsChanged();
     void updateStats();
     void newDocument();
-    void newDocumentGuard();
+    void modifiedDocumentGuard();
+    void openDocumentFrom(QString &fileName);
     void saveDocument();
     void saveDocumentAs();
     void saveDocumentTo(QString &fileName);

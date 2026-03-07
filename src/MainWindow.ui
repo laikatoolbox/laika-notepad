@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Laika Notepad</string>
   </property>
+  <property name="unifiedTitleAndToolBarOnMac">
+   <bool>true</bool>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <property name="leftMargin">
@@ -107,6 +110,7 @@
     <addaction name="actionWord_Wrap"/>
     <addaction name="actionAuto_Refresh_Text_Stats"/>
     <addaction name="actionStatus_Bar"/>
+    <addaction name="actionLock_Toolbars"/>
     <addaction name="separator"/>
     <addaction name="menu_Themes"/>
     <addaction name="actionSettings"/>
@@ -146,7 +150,6 @@
    <addaction name="actionNew"/>
    <addaction name="actionOpen"/>
    <addaction name="actionSave"/>
-   <addaction name="separator"/>
    <addaction name="actionUndo"/>
    <addaction name="actionRedo"/>
    <addaction name="actionFind_Replace"/>
@@ -253,7 +256,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Line Numbers</string>
+    <string>Line &amp;Numbers</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+L</string>
@@ -466,6 +469,14 @@
   <action name="actionDefault_System">
    <property name="text">
     <string>Default (System)</string>
+   </property>
+  </action>
+  <action name="actionLock_Toolbars">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Lock Toolbars</string>
    </property>
   </action>
  </widget>

@@ -16,9 +16,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     ui->setupUi(this);
 
-    // Mac specific
-    this->setUnifiedTitleAndToolBarOnMac(true);
-
     // load settings
     this->ui->actionLine_Numbers->setChecked(LaikaSettings::showLineNumbers);
     this->ui->actionWord_Wrap->setChecked(LaikaSettings::wordWrap);
@@ -55,7 +52,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->statusbar->addPermanentWidget(wordCountNumberLabel);
 
     this->settingsChanged();
-    updateStats();
+    this->updateStats();
+    this->updateWindowTitle();
 }
 
 MainWindow::~MainWindow()
@@ -68,6 +66,11 @@ void MainWindow::settingsChanged()
     ui->plainTextEdit->setShowLineNumbers(LaikaSettings::showLineNumbers);
     ui->plainTextEdit->setWordWrapMode(LaikaSettings::wordWrap ? QTextOption::WrapMode::WordWrap : QTextOption::WrapMode::NoWrap);
     ui->statusbar->setVisible(LaikaSettings::showStatusBar);
+
+    // toolbars
+    ui->mainToolbar->setMovable(!LaikaSettings::lockToolbars);
+    ui->viewToolbar->setMovable(!LaikaSettings::lockToolbars);
+    //ui->->setMovable(!LaikaSettings::lockToolbars);
 
     if (manuallyRefreshedLabel != nullptr)
     {
@@ -123,7 +126,7 @@ void MainWindow::newDocument()
     this->clearFileName();
 }
 
-void MainWindow::newDocumentGuard()
+void MainWindow::modifiedDocumentGuard()
 {
     if (ui->plainTextEdit->document()->isModified())
     {
@@ -145,6 +148,21 @@ void MainWindow::newDocumentGuard()
     else
     {
         this->newDocument();
+    }
+}
+
+void MainWindow::openDocumentFrom(QString &fileName)
+{
+    this->modifiedDocumentGuard();
+
+    QFile file(fileName);
+    if (file.open(QFile::ReadOnly))
+    {
+        QString fileText = file.readAll();
+        this->ui->plainTextEdit->setPlainText(fileText);
+        this->setFileName(fileName);
+        this->ui->plainTextEdit->document()->setModified(false);
+        file.close();
     }
 }
 
@@ -179,21 +197,25 @@ void MainWindow::saveDocumentTo(QString &fileName)
         out << ui->plainTextEdit->toPlainText();
         saveFile.close();
         this->setFileName(fileName);
+        this->ui->plainTextEdit->document()->setModified(false);
     }
 }
 
 void MainWindow::updateWindowTitle()
 {
+    bool documentModified = this->ui->plainTextEdit->document()->isModified();
+    QString modifiedText = documentModified ? " (" + tr("modified") + ")" : "";
+    this->setWindowModified(documentModified);
     this->setWindowFilePath(this->fileName);
 
     if (this->fileName.isEmpty())
     {
-        this->setWindowTitle("Laika Notepad");
+        this->setWindowTitle(tr("Untitled") + modifiedText +  + " - Laika Notepad");
     }
     else
     {
         const QFileInfo info(this->fileName);
-        this->setWindowTitle("Laika Notepad - " + info.fileName());
+        this->setWindowTitle(info.fileName() + modifiedText + " - Laika Notepad");
     }
 }
 
@@ -211,7 +233,7 @@ void MainWindow::clearFileName()
 
 void MainWindow::on_actionNew_triggered()
 {
-    this->newDocumentGuard();
+    this->modifiedDocumentGuard();
 }
 
 void MainWindow::on_actionSettings_triggered()
@@ -384,7 +406,31 @@ void MainWindow::on_actionSave_triggered()
 
 void MainWindow::on_actionNew_From_Clipboard_triggered()
 {
-    this->newDocumentGuard();
+    this->modifiedDocumentGuard();
     ui->plainTextEdit->paste();
+}
+
+
+void MainWindow::on_plainTextEdit_modificationChanged(bool arg1)
+{
+    this->updateWindowTitle();
+}
+
+
+void MainWindow::on_actionLock_Toolbars_changed()
+{
+    LaikaSettings::lockToolbars = ui->actionLock_Toolbars->isChecked();
+    this->settingsChanged();
+}
+
+
+void MainWindow::on_actionOpen_triggered()
+{
+    QString openFileName = QFileDialog::getOpenFileName(this, QString(), QDir::homePath(), "Text files (*.txt);;All files (*.*)");
+
+    if (!openFileName.isEmpty())
+    {
+        this->openDocumentFrom(openFileName);
+    }
 }
 

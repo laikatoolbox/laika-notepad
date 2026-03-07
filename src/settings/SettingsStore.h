@@ -6,6 +6,7 @@ bool showStatusBar = true;
 bool autoRefreshTextStats = true;
 bool showLineNumbers = true;
 bool wordWrap = true;
+bool lockToolbars = false;
 }
 
 #endif // SETTINGSSTORE_H
