@@ -16,6 +16,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     ui->setupUi(this);
 
+    // Mac specific
+    this->setUnifiedTitleAndToolBarOnMac(true);
+
     // load settings
     this->ui->actionLine_Numbers->setChecked(LaikaSettings::showLineNumbers);
     this->ui->actionWord_Wrap->setChecked(LaikaSettings::wordWrap);
@@ -117,24 +120,10 @@ void MainWindow::updateStats()
 void MainWindow::newDocument()
 {
     ui->plainTextEdit->document()->clear();
+    this->clearFileName();
 }
 
-void MainWindow::saveDocument()
-{
-    QString saveFileName = QFileDialog::getSaveFileName(this, QString(), QDir::homePath(), "Text files (*.txt);;All files (*.*)");
-    if (!saveFileName.isEmpty())
-    {
-        QFile saveFile(saveFileName);
-        if (saveFile.open(QFile::WriteOnly|QIODevice::Truncate|QIODevice::Text))
-        {
-            QTextStream out(&saveFile);
-            out << ui->plainTextEdit->toPlainText();
-            saveFile.close();
-        }
-    }
-}
-
-void MainWindow::on_actionNew_triggered()
+void MainWindow::newDocumentGuard()
 {
     if (ui->plainTextEdit->document()->isModified())
     {
@@ -157,6 +146,72 @@ void MainWindow::on_actionNew_triggered()
     {
         this->newDocument();
     }
+}
+
+void MainWindow::saveDocument()
+{
+    if (this->fileName.isEmpty())
+    {
+        this->saveDocumentAs();
+    }
+    else
+    {
+        this->saveDocumentTo(this->fileName);
+    }
+}
+
+void MainWindow::saveDocumentAs()
+{
+    QString saveFileName = QFileDialog::getSaveFileName(this, QString(), QDir::homePath(), "Text files (*.txt);;All files (*.*)");
+
+    if (!saveFileName.isEmpty())
+    {
+        this->saveDocumentTo(saveFileName);
+    }
+}
+
+void MainWindow::saveDocumentTo(QString &fileName)
+{
+    QFile saveFile(fileName);
+    if (saveFile.open(QFile::WriteOnly|QIODevice::Truncate|QIODevice::Text))
+    {
+        QTextStream out(&saveFile);
+        out << ui->plainTextEdit->toPlainText();
+        saveFile.close();
+        this->setFileName(fileName);
+    }
+}
+
+void MainWindow::updateWindowTitle()
+{
+    this->setWindowFilePath(this->fileName);
+
+    if (this->fileName.isEmpty())
+    {
+        this->setWindowTitle("Laika Notepad");
+    }
+    else
+    {
+        const QFileInfo info(this->fileName);
+        this->setWindowTitle("Laika Notepad - " + info.fileName());
+    }
+}
+
+void MainWindow::setFileName(QString &fileName)
+{
+    this->fileName = QString(fileName);
+    this->updateWindowTitle();
+}
+
+void MainWindow::clearFileName()
+{
+    this->fileName = "";
+    this->updateWindowTitle();
+}
+
+void MainWindow::on_actionNew_triggered()
+{
+    this->newDocumentGuard();
 }
 
 void MainWindow::on_actionSettings_triggered()
@@ -314,3 +369,22 @@ void MainWindow::redoAvailable(bool canRedo)
 {
     this->ui->actionRedo->setEnabled(canRedo);
 }
+
+void MainWindow::on_actionSave_As_triggered()
+{
+    this->saveDocumentAs();
+}
+
+
+void MainWindow::on_actionSave_triggered()
+{
+    this->saveDocument();
+}
+
+
+void MainWindow::on_actionNew_From_Clipboard_triggered()
+{
+    this->newDocumentGuard();
+    ui->plainTextEdit->paste();
+}
+

@@ -71,8 +71,15 @@ private slots:
 
     void redoAvailable(bool canRedo);
 
+    void on_actionSave_As_triggered();
+
+    void on_actionSave_triggered();
+
+    void on_actionNew_From_Clipboard_triggered();
+
 private:
     Ui::MainWindow *ui;
+    QString fileName = "";
     QLabel *manuallyRefreshedLabel = nullptr;
     QLabel *lineCountLabel = nullptr;
     QLabel *lineCountNumberLabel = nullptr;
@@ -83,6 +90,12 @@ private:
     void settingsChanged();
     void updateStats();
     void newDocument();
+    void newDocumentGuard();
     void saveDocument();
+    void saveDocumentAs();
+    void saveDocumentTo(QString &fileName);
+    void updateWindowTitle();
+    void clearFileName();
+    void setFileName(QString &fileName);
 };
 #endif // MAINWINDOW_H
