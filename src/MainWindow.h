@@ -82,5 +82,7 @@ private:
     QLabel *wordCountNumberLabel = nullptr;
     void settingsChanged();
     void updateStats();
+    void newDocument();
+    void saveDocument();
 };
 #endif // MAINWINDOW_H

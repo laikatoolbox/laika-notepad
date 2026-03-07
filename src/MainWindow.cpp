@@ -10,6 +10,7 @@
 #include <QClipboard>
 #include <QFontDatabase>
 #include <QMessageBox>
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -57,33 +58,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::on_actionNew_triggered()
-{
-
-}
-
-void MainWindow::on_actionSettings_triggered()
-{
-    SettingsDialog *settingsDialog  = new SettingsDialog();
-    settingsDialog->show();
-}
-
-
-void MainWindow::on_actionAbout_triggered()
-{
-    AboutDialog *aboutDialog  = new AboutDialog();
-    aboutDialog->show();
-}
-
-
-void MainWindow::on_plainTextEdit_textChanged()
-{
-    if (LaikaSettings::showStatusBar && LaikaSettings::autoRefreshTextStats)
-    {
-        updateStats();
-    }
 }
 
 void MainWindow::settingsChanged()
@@ -138,6 +112,73 @@ void MainWindow::updateStats()
     lineCountNumberLabel->setText(QLocale().toString(result.lineCount));
     wordCountNumberLabel->setText(QLocale().toString(result.wordCount));
     characterCountNumberLabel->setText(QLocale().toString(result.characterCount));
+}
+
+void MainWindow::newDocument()
+{
+    ui->plainTextEdit->document()->clear();
+}
+
+void MainWindow::saveDocument()
+{
+    QString saveFileName = QFileDialog::getSaveFileName(this, QString(), QDir::homePath(), "Text files (*.txt);;All files (*.*)");
+    if (!saveFileName.isEmpty())
+    {
+        QFile saveFile(saveFileName);
+        if (saveFile.open(QFile::WriteOnly|QIODevice::Truncate|QIODevice::Text))
+        {
+            QTextStream out(&saveFile);
+            out << ui->plainTextEdit->toPlainText();
+            saveFile.close();
+        }
+    }
+}
+
+void MainWindow::on_actionNew_triggered()
+{
+    if (ui->plainTextEdit->document()->isModified())
+    {
+        QMessageBox::StandardButton reply =
+            QMessageBox::question(this, "Document Modified", "Do you want to save changes to the current document?", QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::Yes)
+        {
+            this->saveDocument();
+        }
+        else if (reply == QMessageBox::No)
+        {
+            this->newDocument();
+        }
+        else
+        {
+            // cancelled so do nothing
+        }
+    }
+    else
+    {
+        this->newDocument();
+    }
+}
+
+void MainWindow::on_actionSettings_triggered()
+{
+    SettingsDialog *settingsDialog  = new SettingsDialog();
+    settingsDialog->show();
+}
+
+
+void MainWindow::on_actionAbout_triggered()
+{
+    AboutDialog *aboutDialog  = new AboutDialog();
+    aboutDialog->show();
+}
+
+
+void MainWindow::on_plainTextEdit_textChanged()
+{
+    if (LaikaSettings::showStatusBar && LaikaSettings::autoRefreshTextStats)
+    {
+        updateStats();
+    }
 }
 
 void MainWindow::on_action_Refresh_Text_Stats_triggered()
