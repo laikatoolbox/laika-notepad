@@ -61,6 +61,27 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    // check if we have a modified document and ask to save if we do
+    if (this->ui->plainTextEdit->document()->isModified())
+    {
+        bool userCancelled = this->modifiedDocumentGuard();
+
+        // user cancelled, so bail out of closing
+        if (userCancelled)
+        {
+            event->ignore();
+            return;
+        }
+    }
+
+    // we either don't have a modified document, the user
+    // saved the modified document, or the user decided not to
+    // save but close anyways
+    event->accept();
+}
+
 void MainWindow::settingsChanged()
 {
     ui->plainTextEdit->setShowLineNumbers(LaikaSettings::showLineNumbers);
@@ -126,12 +147,12 @@ void MainWindow::newDocument()
     this->clearFileName();
 }
 
-void MainWindow::modifiedDocumentGuard()
+bool MainWindow::modifiedDocumentGuard()
 {
     if (ui->plainTextEdit->document()->isModified())
     {
         QMessageBox::StandardButton reply =
-            QMessageBox::question(this, "Document Modified", "Do you want to save changes to the current document?", QMessageBox::Yes|QMessageBox::No);
+            QMessageBox::question(this, "Document Modified", "Do you want to save changes to the current document?", QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel);
         if (reply == QMessageBox::Yes)
         {
             this->saveDocument();
@@ -142,13 +163,16 @@ void MainWindow::modifiedDocumentGuard()
         }
         else
         {
-            // cancelled so do nothing
+            // return true because we're cancelling
+            return true;
         }
     }
     else
     {
         this->newDocument();
     }
+
+    return false;
 }
 
 void MainWindow::openDocumentFrom(QString &fileName)

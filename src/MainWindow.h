@@ -19,6 +19,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+protected:
+    void closeEvent(QCloseEvent *event);
+
 private slots:
 
     void on_actionNew_triggered();
@@ -96,7 +99,7 @@ private:
     void settingsChanged();
     void updateStats();
     void newDocument();
-    void modifiedDocumentGuard();
+    bool modifiedDocumentGuard();
     void openDocumentFrom(QString &fileName);
     void saveDocument();
     void saveDocumentAs();
