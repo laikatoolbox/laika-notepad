@@ -2,6 +2,7 @@
 #define TEXTEDIT_H
 
 #include <QPlainTextEdit>
+#include <settings/SettingsStore.h>
 
 namespace LaikaNotepad {
     class TextEdit : public QPlainTextEdit {
@@ -12,8 +13,7 @@ namespace LaikaNotepad {
         void lineNumberAreaPaintEvent(QPaintEvent *event);
         int lineNumberAreaWidth();
         int getDefaultFontSize();
-        void setShowLineNumbers(bool value);
-        bool getShowLineNumbers();
+        void setSettings(LaikaSettings::SettingsStore *settings);
 
     protected:
         void resizeEvent(QResizeEvent *event) override;
@@ -25,10 +25,15 @@ namespace LaikaNotepad {
         void updateLineNumberArea(const QRect &rect, int dy);
 
     private:
-        QWidget *lineNumberArea;        
-        int lineNumberPaddding = 3;
+        QWidget *lineNumberArea;
         int defaultFontSize = 0;
+        int lineNumberPaddding = 3;
+
+        // from settings
         bool showLineNumbers = true;
+        QBrush lineNumberBackgroundColorBrush = QBrush();
+        QPen currentLineNumberTextColorPen = QPen();
+        QPen lineNumberTextColorPen = QPen();
 
         static inline int numDigits(const int input) {
             return 1 + (input >= 1000000000) + (input >= 100000000) + (input >= 10000000) +

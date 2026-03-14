@@ -1,10 +1,18 @@
 #ifndef THEME_H
 #define THEME_H
 
-namespace LaikaNotepad {
+#include <QColor>
+#include <string>
+
+namespace LaikaSettings {
     class Theme {
     public:
-        Theme();
+        std::string name = "";
+        QColor backgroundColor = QColor();
+        QColor textColor = QColor();
+        QColor lineNumberBackgroundColor = QColor();
+        QColor lineNumberTextColor = QColor();
+        QColor currentLineNumberTextColor = QColor();
     };
 }
 

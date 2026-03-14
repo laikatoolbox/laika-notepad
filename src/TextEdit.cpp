@@ -3,6 +3,9 @@
 #include <QPalette>
 #include <QPainter>
 #include <QTextBlock>
+#include <QApplication>
+#include <QStyleHints>
+#include <QStyle>
 
 LaikaNotepad::TextEdit::TextEdit(QWidget *parent) : QPlainTextEdit(parent)
 {
@@ -12,6 +15,7 @@ LaikaNotepad::TextEdit::TextEdit(QWidget *parent) : QPlainTextEdit(parent)
     connect(this, &LaikaNotepad::TextEdit::updateRequest, this, &LaikaNotepad::TextEdit::updateLineNumberArea);
     connect(this, &LaikaNotepad::TextEdit::cursorPositionChanged, this, &LaikaNotepad::TextEdit::highlightCurrentLine);
 
+    this->setSettings(nullptr);
     updateLineNumberAreaWidth(0);
     highlightCurrentLine();
     this->defaultFontSize = this->font().pointSize();
@@ -25,8 +29,7 @@ int LaikaNotepad::TextEdit::lineNumberAreaWidth()
     return space;
 }
 
-void LaikaNotepad::TextEdit::updateLineNumberAreaWidth(int newBlockCount)
-{
+void LaikaNotepad::TextEdit::updateLineNumberAreaWidth(int newBlockCount) {
     if (showLineNumbers) {
         setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
     } else {
@@ -70,9 +73,10 @@ void LaikaNotepad::TextEdit::highlightCurrentLine()
 
 void LaikaNotepad::TextEdit::lineNumberAreaPaintEvent(QPaintEvent *event)
 {
-    if (showLineNumbers) {
+    if (showLineNumbers)
+    {
         QPainter painter(lineNumberArea);
-        painter.fillRect(event->rect(), Qt::lightGray);
+        painter.fillRect(event->rect(), this->lineNumberBackgroundColorBrush);
 
         QTextBlock block = firstVisibleBlock();
         int blockNumber = block.blockNumber();
@@ -80,19 +84,25 @@ void LaikaNotepad::TextEdit::lineNumberAreaPaintEvent(QPaintEvent *event)
         int bottom = top + qRound(blockBoundingRect(block).height());
         QFont font = painter.font();
 
-        while (block.isValid() && top <= event->rect().bottom()) {
-            if (block.isVisible() && bottom >= event->rect().top()) {
+        while (block.isValid() && top <= event->rect().bottom())
+        {
+            if (block.isVisible() && bottom >= event->rect().top())
+            {
                 QString number = QString::number(blockNumber + 1);
                 bool isCurrentBlock = this->textCursor().blockNumber() == blockNumber;
-                if (isCurrentBlock) {
-                    painter.setPen(Qt::blue);
+                if (isCurrentBlock)
+                {
+                    painter.setPen(this->currentLineNumberTextColorPen);
                     font.setBold(true);
                     painter.setFont(font);
-                } else {
+                }
+                else
+                {
                     font.setBold(false);
                     painter.setFont(font);
-                    painter.setPen(Qt::black);
+                    painter.setPen(this->lineNumberTextColorPen);
                 }
+
                 painter.drawText(0, top, lineNumberArea->width() - lineNumberPaddding, fontMetrics().height(),
                                  Qt::AlignRight, number);
             }
@@ -111,7 +121,8 @@ void LaikaNotepad::TextEdit::keyPressEvent(QKeyEvent *event)
 
     // make SHIFT + Enter be a plain newline character
     auto modifiers = keyEvent->modifiers();
-    if ((modifiers & Qt::ShiftModifier) && (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return)) {
+    if ((modifiers & Qt::ShiftModifier) && (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return))
+    {
         event->setModifiers(modifiers & ~Qt::ShiftModifier);
     }
 
@@ -123,16 +134,89 @@ int LaikaNotepad::TextEdit::getDefaultFontSize()
     return this->defaultFontSize;
 }
 
-void LaikaNotepad::TextEdit::setShowLineNumbers(bool value)
+void LaikaNotepad::TextEdit::setSettings(LaikaSettings::SettingsStore *settings)
 {
-    this->showLineNumbers = value;
+    // load basic values from settings or set defaults if no settings
+    if (settings != nullptr)
+    {
+        this->showLineNumbers = settings->showLineNumbers;
+    }
+    else
+    {
+        this->showLineNumbers = LaikaSettings::SettingsStore::defaultShowLineNumbers;
+    }
+
+    // load theme values from settings or set defaults if no settings/theme
+    if (settings != nullptr && settings->currentTheme != nullptr) // we have a theme
+    {
+        // basic text edit palette
+        QPalette palette = this->palette();
+        palette.setColor(QPalette::Base, settings->currentTheme->backgroundColor); // background
+        palette.setColor(QPalette::Text, settings->currentTheme->textColor); // text
+        this->setPalette(palette);
+
+        // line number colors
+        this->lineNumberBackgroundColorBrush = QBrush(settings->currentTheme->lineNumberBackgroundColor);
+        this->lineNumberTextColorPen = QPen(settings->currentTheme->lineNumberTextColor);
+        this->currentLineNumberTextColorPen = QPen(settings->currentTheme->currentLineNumberTextColor);
+    }
+    else // just use defaults
+    {
+        // basic text edit palette
+        QStyle *style = qApp->style();
+        QPalette palette = style->standardPalette();
+        this->setPalette(palette);
+
+        // line number colors
+        QColor lineNumberBackgroundColor = palette.window().color().toHsl();
+        QColor lineNumberTextColor = palette.window().color().toHsl(); // we base this off the window color
+        QColor currentLineNumberTextColor = palette.accent().color().toHsl();
+
+        Qt::ColorScheme currentScheme = QGuiApplication::styleHints()->colorScheme();
+
+        if (currentScheme == Qt::ColorScheme::Dark)
+        {
+            lineNumberBackgroundColor.setHsv(
+                lineNumberBackgroundColor.hsvHue(),
+                lineNumberBackgroundColor.hsvSaturation(),
+                std::min(lineNumberBackgroundColor.value() + 15, 255)
+            );
+            lineNumberTextColor.setHsv(
+                lineNumberTextColor.hsvHue(),
+                lineNumberTextColor.hsvSaturation(),
+                std::min(lineNumberTextColor.value() + 125, 255)
+            );
+            currentLineNumberTextColor.setHsv(
+                currentLineNumberTextColor.hsvHue(),
+                std::max(currentLineNumberTextColor.hsvSaturation() - 25, 0),
+                std::min(currentLineNumberTextColor.value() + 40, 255)
+            );
+        }
+        else
+        {
+            lineNumberBackgroundColor.setHsv(
+                lineNumberBackgroundColor.hsvHue(),
+                lineNumberBackgroundColor.hsvSaturation(),
+                std::max(lineNumberBackgroundColor.value() - 15, 0)
+            );
+            lineNumberTextColor.setHsv(
+                lineNumberTextColor.hsvHue(),
+                lineNumberTextColor.hsvSaturation(),
+                std::max(lineNumberTextColor.value() - 125, 0)
+            );
+            currentLineNumberTextColor.setHsv(
+                currentLineNumberTextColor.hsvHue(),
+                std::min(currentLineNumberTextColor.hsvSaturation() + 50, 255),
+                std::max(currentLineNumberTextColor.value() - 40, 0)
+            );
+        }
+
+        this->lineNumberBackgroundColorBrush = QBrush(lineNumberBackgroundColor);
+        this->lineNumberTextColorPen = QPen(lineNumberTextColor);
+        this->currentLineNumberTextColorPen = QPen(currentLineNumberTextColor);
+    }
+
     this->updateLineNumberAreaWidth(0);
     this->highlightCurrentLine();
     this->repaint();
-}
-
-
-bool LaikaNotepad::TextEdit::getShowLineNumbers()
-{
-    return this->showLineNumbers;
 }

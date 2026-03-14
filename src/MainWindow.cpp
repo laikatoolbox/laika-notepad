@@ -2,7 +2,6 @@
 #include "./ui_MainWindow.h"
 #include "AboutDialog.h"
 #include "SettingsDialog.h"
-#include "settings/SettingsStore.h"
 #include "TextStats.h"
 #include <QFuture>
 #include <QtConcurrent>
@@ -17,10 +16,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->setupUi(this);
 
     // load settings
-    this->ui->actionLine_Numbers->setChecked(LaikaSettings::showLineNumbers);
-    this->ui->actionWord_Wrap->setChecked(LaikaSettings::wordWrap);
-    this->ui->actionAuto_Refresh_Text_Stats->setChecked(LaikaSettings::autoRefreshTextStats);
-    this->ui->actionStatus_Bar->setChecked(LaikaSettings::showStatusBar);
+    this->ui->actionLine_Numbers->setChecked(this->settings->showLineNumbers);
+    this->ui->actionWord_Wrap->setChecked(this->settings->wordWrap);
+    this->ui->actionAuto_Refresh_Text_Stats->setChecked(this->settings->autoRefreshTextStats);
+    this->ui->actionStatus_Bar->setChecked(this->settings->showStatusBar);
 
     // set up undo/redo
     connect(ui->plainTextEdit, SIGNAL(undoAvailable(bool)), this, SLOT(undoAvailable(bool)));
@@ -58,6 +57,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow()
 {
+    delete this->settings;
     delete ui;
 }
 
@@ -82,20 +82,31 @@ void MainWindow::closeEvent(QCloseEvent *event)
     event->accept();
 }
 
+void MainWindow::changeEvent(QEvent *event) {
+    // we want to notify the text edit that
+    // the theme has changed so it can update colors
+    if (event->type() == QEvent::ThemeChange)
+    {
+        this->settingsChanged();
+    }
+
+    // call overridden function
+    QMainWindow::changeEvent(event);
+}
+
 void MainWindow::settingsChanged()
 {
-    ui->plainTextEdit->setShowLineNumbers(LaikaSettings::showLineNumbers);
-    ui->plainTextEdit->setWordWrapMode(LaikaSettings::wordWrap ? QTextOption::WrapMode::WordWrap : QTextOption::WrapMode::NoWrap);
-    ui->statusbar->setVisible(LaikaSettings::showStatusBar);
+    ui->plainTextEdit->setSettings(this->settings);
+    ui->plainTextEdit->setWordWrapMode(this->settings->wordWrap ? QTextOption::WrapMode::WordWrap : QTextOption::WrapMode::NoWrap);
+    ui->statusbar->setVisible(this->settings->showStatusBar);
 
     // toolbars
-    ui->mainToolbar->setMovable(!LaikaSettings::lockToolbars);
-    ui->viewToolbar->setMovable(!LaikaSettings::lockToolbars);
-    //ui->->setMovable(!LaikaSettings::lockToolbars);
+    ui->mainToolbar->setMovable(!this->settings->lockToolbars);
+    ui->viewToolbar->setMovable(!this->settings->lockToolbars);
 
     if (manuallyRefreshedLabel != nullptr)
     {
-        manuallyRefreshedLabel->setVisible(!LaikaSettings::autoRefreshTextStats);
+        manuallyRefreshedLabel->setVisible(!this->settings->autoRefreshTextStats);
     }
 }
 
@@ -276,7 +287,7 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::on_plainTextEdit_textChanged()
 {
-    if (LaikaSettings::showStatusBar && LaikaSettings::autoRefreshTextStats)
+    if (this->settings->showStatusBar && this->settings->autoRefreshTextStats)
     {
         updateStats();
     }
@@ -290,28 +301,28 @@ void MainWindow::on_action_Refresh_Text_Stats_triggered()
 
 void MainWindow::on_actionLine_Numbers_changed()
 {
-    LaikaSettings::showLineNumbers = this->ui->actionLine_Numbers->isChecked();
+    this->settings->showLineNumbers = this->ui->actionLine_Numbers->isChecked();
     this->settingsChanged();
 }
 
 
 void MainWindow::on_actionWord_Wrap_changed()
 {
-    LaikaSettings::wordWrap = this->ui->actionWord_Wrap->isChecked();
+    this->settings->wordWrap = this->ui->actionWord_Wrap->isChecked();
     this->settingsChanged();
 }
 
 
 void MainWindow::on_actionAuto_Refresh_Text_Stats_changed()
 {
-    LaikaSettings::autoRefreshTextStats = this->ui->actionAuto_Refresh_Text_Stats->isChecked();
+    this->settings->autoRefreshTextStats = this->ui->actionAuto_Refresh_Text_Stats->isChecked();
     this->settingsChanged();
 }
 
 
 void MainWindow::on_actionStatus_Bar_changed()
 {
-    LaikaSettings::showStatusBar = this->ui->actionStatus_Bar->isChecked();
+    this->settings->showStatusBar = this->ui->actionStatus_Bar->isChecked();
     this->settingsChanged();
 }
 
@@ -443,7 +454,7 @@ void MainWindow::on_plainTextEdit_modificationChanged(bool arg1)
 
 void MainWindow::on_actionLock_Toolbars_changed()
 {
-    LaikaSettings::lockToolbars = ui->actionLock_Toolbars->isChecked();
+    this->settings->lockToolbars = ui->actionLock_Toolbars->isChecked();
     this->settingsChanged();
 }
 

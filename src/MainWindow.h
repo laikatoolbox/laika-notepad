@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QLabel>
 #include <QPushButton>
+#include <settings/SettingsStore.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -18,9 +19,11 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    LaikaSettings::SettingsStore *settings = new LaikaSettings::SettingsStore();
 
 protected:
-    void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent *event) override;
+    void changeEvent(QEvent *event) override;
 
 private slots:
 

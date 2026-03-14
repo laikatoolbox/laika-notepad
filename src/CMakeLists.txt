@@ -27,7 +27,7 @@ qt_add_executable(laika-notepad
     ${PROJECT_SOURCES}
     TextEdit.h TextEdit.cpp
     LineNumberArea.h
-    settings/SettingsStore.h
+    settings/SettingsStore.h settings/SettingsStore.cpp
     settings/Theme.h settings/Theme.cpp
     AboutDialog.h AboutDialog.cpp AboutDialog.ui
     Images.qrc
