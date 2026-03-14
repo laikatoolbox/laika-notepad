@@ -55,8 +55,8 @@
     </message>
     <message>
         <location filename="MainWindow.ui" line="140"/>
-        <location filename="MainWindow.ui" line="166"/>
-        <source>toolBar</source>
+        <source>Main Toolbar</source>
+        <oldsource>toolBar</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -78,6 +78,11 @@
     <message>
         <location filename="MainWindow.ui" line="112"/>
         <source>&amp;Themes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="166"/>
+        <source>View Toolbar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

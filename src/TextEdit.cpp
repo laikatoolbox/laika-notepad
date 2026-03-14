@@ -1,6 +1,6 @@
 #include "TextEdit.h"
 #include "LineNumberArea.h"
-
+#include <QPalette>
 #include <QPainter>
 #include <QTextBlock>
 
@@ -85,7 +85,7 @@ void LaikaNotepad::TextEdit::lineNumberAreaPaintEvent(QPaintEvent *event)
                 QString number = QString::number(blockNumber + 1);
                 bool isCurrentBlock = this->textCursor().blockNumber() == blockNumber;
                 if (isCurrentBlock) {
-                    painter.setPen(Qt::red);
+                    painter.setPen(Qt::blue);
                     font.setBold(true);
                     painter.setFont(font);
                 } else {
