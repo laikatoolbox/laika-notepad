@@ -469,3 +469,33 @@ void MainWindow::on_actionOpen_triggered()
     }
 }
 
+
+void MainWindow::on_findPreviousButton_clicked()
+{
+
+}
+
+
+void MainWindow::on_findNextButton_clicked()
+{
+
+}
+
+
+void MainWindow::on_findAllButton_clicked()
+{
+
+}
+
+
+void MainWindow::on_replaceNextButton_clicked()
+{
+
+}
+
+
+void MainWindow::on_replaceAllButton_clicked()
+{
+
+}
+

@@ -89,6 +89,16 @@ private slots:
 
     void on_actionOpen_triggered();
 
+    void on_findPreviousButton_clicked();
+
+    void on_findNextButton_clicked();
+
+    void on_findAllButton_clicked();
+
+    void on_replaceNextButton_clicked();
+
+    void on_replaceAllButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QString fileName = "";
