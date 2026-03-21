@@ -53,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     this->settingsChanged();
     this->updateStats();
     this->updateWindowTitle();
+    this->ui->findTableVIew->setModel(&this->findModel);
 }
 
 MainWindow::~MainWindow()
@@ -484,6 +485,31 @@ void MainWindow::on_findNextButton_clicked()
 
 void MainWindow::on_findAllButton_clicked()
 {
+    this->findModel.invalidate();
+    std::string textToFind = this->ui->findLineEdit->text().toStdString();
+    std::string text = this->ui->plainTextEdit->toPlainText().toStdString();
+    int textToFindLength = textToFind.length();
+
+    if (textToFindLength == 0)
+    {
+        return;
+    }
+
+    int pos = text.find(textToFind);
+
+    if (pos != std::string::npos)
+    {
+        this->findModel.append({pos, pos+textToFindLength});
+    }
+
+    while(pos != std::string::npos)
+    {
+        pos = text.find(textToFind, pos+1);
+        if (pos != std::string::npos)
+        {
+            this->findModel.append({pos, pos+textToFindLength});
+        }
+    }
 
 }
 
@@ -497,5 +523,41 @@ void MainWindow::on_replaceNextButton_clicked()
 void MainWindow::on_replaceAllButton_clicked()
 {
 
+}
+
+
+void MainWindow::on_actionFind_Replace_triggered()
+{
+    bool findReplaceVisible = !this->ui->findReplaceDock->isVisible();
+    this->ui->findReplaceDock->setVisible(findReplaceVisible);
+
+    if (findReplaceVisible)
+    {
+        this->ui->findLineEdit->setFocus();
+    }
+    else
+    {
+        this->ui->plainTextEdit->setFocus();
+    }
+}
+
+
+void MainWindow::on_findTableVIew_doubleClicked(const QModelIndex &index)
+{
+    FindResult *selectedFind = this->findModel.resultAt(index.row());
+
+    if (selectedFind != nullptr)
+    {
+        QList<QTextEdit::ExtraSelection> extraSelections;
+        QTextEdit::ExtraSelection extra;
+        extra.format.setBackground(Qt::red);
+
+        extra.cursor = this->ui->plainTextEdit->textCursor();
+        extra.cursor.setPosition(selectedFind->startPosition);
+        extra.cursor.select(QTextCursor::WordUnderCursor);
+
+        extraSelections.append(extra);
+        this->ui->plainTextEdit->setExtraSelections(extraSelections);
+    }
 }
 

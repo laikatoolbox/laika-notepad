@@ -33,6 +33,7 @@ qt_add_executable(laika-notepad
     Images.qrc
     SettingsDialog.h SettingsDialog.cpp SettingsDialog.ui
     TextStats.h
+    FindModel.h FindModel.cpp
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})

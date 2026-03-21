@@ -60,17 +60,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="305"/>
+        <location filename="MainWindow.ui" line="316"/>
         <source>&amp;New</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="308"/>
+        <location filename="MainWindow.ui" line="319"/>
         <source>Ctrl+N</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="316"/>
+        <location filename="MainWindow.ui" line="327"/>
         <source>&amp;About...</source>
         <oldsource>&amp;About</oldsource>
         <translation type="unfinished"></translation>
@@ -101,297 +101,303 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="262"/>
-        <source>Find Previous</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="269"/>
+        <location filename="MainWindow.ui" line="276"/>
         <source>Find Next</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="283"/>
-        <source>Replace Next</source>
+        <oldsource>Find Previous</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="MainWindow.ui" line="290"/>
+        <source>Replace Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="297"/>
         <source>Replace All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="276"/>
+        <location filename="MainWindow.ui" line="283"/>
         <source>Find All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="327"/>
-        <source>&amp;Undo</source>
+        <location filename="MainWindow.ui" line="269"/>
+        <source>Whole Word</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.ui" line="330"/>
-        <source>Ctrl+Z</source>
+        <location filename="MainWindow.ui" line="262"/>
+        <source>Match Case</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="MainWindow.ui" line="338"/>
-        <source>&amp;Redo</source>
+        <source>&amp;Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="MainWindow.ui" line="341"/>
-        <source>Ctrl+Shift+Z</source>
+        <source>Ctrl+Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="MainWindow.ui" line="349"/>
-        <source>Select &amp;All</source>
+        <source>&amp;Redo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="MainWindow.ui" line="352"/>
-        <source>Ctrl+A</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="357"/>
-        <source>Deselect &amp;All</source>
+        <source>Ctrl+Shift+Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="MainWindow.ui" line="360"/>
-        <source>Ctrl+D</source>
+        <source>Select &amp;All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="363"/>
+        <source>Ctrl+A</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="MainWindow.ui" line="368"/>
-        <source>&amp;Word Wrap</source>
+        <source>Deselect &amp;All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="MainWindow.ui" line="371"/>
-        <source>Ctrl+/</source>
+        <source>Ctrl+D</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="MainWindow.ui" line="379"/>
-        <source>Line &amp;Numbers</source>
+        <source>&amp;Word Wrap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="MainWindow.ui" line="382"/>
-        <source>Ctrl+L</source>
+        <source>Ctrl+/</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="MainWindow.ui" line="390"/>
-        <source>&amp;Find/Replace</source>
+        <source>Line &amp;Numbers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="MainWindow.ui" line="393"/>
-        <source>Ctrl+F</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="404"/>
-        <source>Ctrl+O</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="412"/>
-        <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="415"/>
-        <source>Ctrl+S</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="423"/>
-        <source>Save &amp;As...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="426"/>
-        <source>Ctrl+Shift+S</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="434"/>
-        <source>&amp;Close</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="439"/>
-        <source>&amp;Settings...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="450"/>
-        <source>&amp;Refresh Text Stats</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="453"/>
-        <source>Ctrl+R</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="458"/>
-        <source>Copy A&amp;ll</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="461"/>
-        <source>Ctrl+Shift+C</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="469"/>
-        <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="472"/>
-        <source>Ctrl+C</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="477"/>
-        <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="480"/>
-        <source>Ctrl+V</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="488"/>
-        <source>New &amp;From Clipboard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="491"/>
-        <source>Ctrl+Shift+V</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="499"/>
-        <source>&amp;Auto-Refresh Text Stats</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="502"/>
-        <source>Ctrl+Shift+R</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="510"/>
-        <source>Status &amp;Bar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="513"/>
-        <source>Ctrl+B</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="518"/>
-        <source>Go To...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="523"/>
-        <source>Go To Start</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="526"/>
-        <source>Ctrl+1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="531"/>
-        <source>Go To End</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="534"/>
-        <source>Ctrl+2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="542"/>
-        <source>Zoom &amp;In</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="545"/>
-        <source>Ctrl+=</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="553"/>
-        <source>Zoom &amp;Out</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="556"/>
-        <source>Ctrl+-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="564"/>
-        <source>&amp;Reset Zoom</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="567"/>
-        <source>Ctrl+0</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="572"/>
-        <source>About &amp;Qt...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="583"/>
-        <source>Cut</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="586"/>
-        <source>Ctrl+X</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="591"/>
-        <source>Default (System)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="MainWindow.ui" line="599"/>
-        <source>&amp;Lock Toolbars</source>
+        <source>Ctrl+L</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="MainWindow.ui" line="401"/>
+        <source>&amp;Find/Replace</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="404"/>
+        <source>Ctrl+F</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="415"/>
+        <source>Ctrl+O</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="423"/>
+        <source>&amp;Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="426"/>
+        <source>Ctrl+S</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="434"/>
+        <source>Save &amp;As...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="437"/>
+        <source>Ctrl+Shift+S</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="445"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="450"/>
+        <source>&amp;Settings...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="461"/>
+        <source>&amp;Refresh Text Stats</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="464"/>
+        <source>Ctrl+R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="469"/>
+        <source>Copy A&amp;ll</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="472"/>
+        <source>Ctrl+Shift+C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="480"/>
+        <source>&amp;Copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="483"/>
+        <source>Ctrl+C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="488"/>
+        <source>&amp;Paste</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="491"/>
+        <source>Ctrl+V</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="499"/>
+        <source>New &amp;From Clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="502"/>
+        <source>Ctrl+Shift+V</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="510"/>
+        <source>&amp;Auto-Refresh Text Stats</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="513"/>
+        <source>Ctrl+Shift+R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="521"/>
+        <source>Status &amp;Bar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="524"/>
+        <source>Ctrl+B</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="529"/>
+        <source>Go To...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="534"/>
+        <source>Go To Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="537"/>
+        <source>Ctrl+1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="542"/>
+        <source>Go To End</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="545"/>
+        <source>Ctrl+2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="553"/>
+        <source>Zoom &amp;In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="556"/>
+        <source>Ctrl+=</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="564"/>
+        <source>Zoom &amp;Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="567"/>
+        <source>Ctrl+-</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="575"/>
+        <source>&amp;Reset Zoom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="578"/>
+        <source>Ctrl+0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="583"/>
+        <source>About &amp;Qt...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="594"/>
+        <source>Cut</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="597"/>
+        <source>Ctrl+X</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="602"/>
+        <source>Default (System)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="610"/>
+        <source>&amp;Lock Toolbars</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="MainWindow.ui" line="412"/>
         <source>&amp;Open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.cpp" line="242"/>
+        <location filename="MainWindow.cpp" line="243"/>
         <source>modified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.cpp" line="248"/>
+        <location filename="MainWindow.cpp" line="249"/>
         <source>Untitled</source>
         <translation type="unfinished"></translation>
     </message>

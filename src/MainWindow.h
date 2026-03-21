@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <settings/SettingsStore.h>
+#include <FindModel.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -20,6 +21,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     LaikaSettings::SettingsStore *settings = new LaikaSettings::SettingsStore();
+    FindModel findModel;
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -98,6 +100,10 @@ private slots:
     void on_replaceNextButton_clicked();
 
     void on_replaceAllButton_clicked();
+
+    void on_actionFind_Replace_triggered();
+
+    void on_findTableVIew_doubleClicked(const QModelIndex &index);
 
 private:
     Ui::MainWindow *ui;

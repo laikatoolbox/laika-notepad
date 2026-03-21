@@ -257,13 +257,20 @@ QDockWidget {
       <widget class="QLineEdit" name="replaceLineEdit"/>
      </item>
      <item row="2" column="0">
-      <widget class="QPushButton" name="findPreviousButton">
+      <widget class="QCheckBox" name="matchCaseCheckBox">
        <property name="text">
-        <string>Find Previous</string>
+        <string>Match Case</string>
        </property>
       </widget>
      </item>
      <item row="2" column="1">
+      <widget class="QCheckBox" name="wholeWordCheckBox">
+       <property name="text">
+        <string>Whole Word</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
       <widget class="QPushButton" name="findNextButton">
        <property name="text">
         <string>Find Next</string>
@@ -292,7 +299,11 @@ QDockWidget {
       </widget>
      </item>
      <item row="5" column="0" colspan="2">
-      <widget class="QListView" name="findListView"/>
+      <widget class="QTableView" name="findTableVIew">
+       <property name="frameShape">
+        <enum>QFrame::Shape::NoFrame</enum>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
