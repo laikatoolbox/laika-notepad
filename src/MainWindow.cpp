@@ -10,6 +10,9 @@
 #include <QFontDatabase>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QScrollBar>
+#include <algorithm>
+#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -53,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     this->settingsChanged();
     this->updateStats();
     this->updateWindowTitle();
-    this->ui->findTableVIew->setModel(&this->findModel);
+    this->ui->findTableView->setModel(&this->findModel);
 }
 
 MainWindow::~MainWindow()
@@ -267,6 +270,47 @@ void MainWindow::clearFileName()
     this->updateWindowTitle();
 }
 
+void MainWindow::selectCurrentFindResult()
+{
+    FindResult *selectedFind = this->findModel.resultAt(this->findModel.currentResultIndex);
+    int textLength = this->ui->plainTextEdit->toPlainText().length();
+
+    if (textLength == 0)
+    {
+        this->ui->plainTextEdit->extraSelections().clear();
+        return;
+    }
+
+    if (selectedFind != nullptr)
+    {
+        // Move the cursor to the position of the find
+        QTextCursor newCursor = QTextCursor(this->ui->plainTextEdit->textCursor());
+        newCursor.setPosition(std::min(selectedFind->endPosition, textLength - 1));
+        this->ui->plainTextEdit->setTextCursor(newCursor);
+        this->ui->plainTextEdit->moveCursor(QTextCursor::MoveOperation::NextCharacter);
+        this->ui->plainTextEdit->ensureCursorVisible();
+
+        // highlight the find
+        QList<QTextEdit::ExtraSelection> extraSelections;
+        QTextEdit::ExtraSelection extra;
+        extra.format.setBackground(Qt::red);
+        extra.cursor = this->ui->plainTextEdit->textCursor();
+        extra.cursor.setPosition(std::min(selectedFind->startPosition, textLength - 1));
+        extra.cursor.select(QTextCursor::SelectionType::WordUnderCursor);
+        extraSelections.append(extra);
+        this->ui->plainTextEdit->setExtraSelections(extraSelections);
+
+        // Focus the text edit
+        this->ui->plainTextEdit->setFocus();
+
+        // Make the selection match in the table
+        if (this->findModel.currentResultIndex < this->findModel.count()  && this->ui->findTableView->currentIndex().row() != this->findModel.currentResultIndex)
+        {
+            this->ui->findTableView->selectRow(this->findModel.currentResultIndex);
+        }
+    }
+}
+
 void MainWindow::on_actionNew_triggered()
 {
     this->modifiedDocumentGuard();
@@ -439,7 +483,6 @@ void MainWindow::on_actionSave_triggered()
     this->saveDocument();
 }
 
-
 void MainWindow::on_actionNew_From_Clipboard_triggered()
 {
     this->modifiedDocumentGuard();
@@ -473,13 +516,15 @@ void MainWindow::on_actionOpen_triggered()
 
 void MainWindow::on_findPreviousButton_clicked()
 {
-
+    this->findModel.decrementIndex();
+    this->selectCurrentFindResult();
 }
 
 
 void MainWindow::on_findNextButton_clicked()
-{
-
+{    
+    this->findModel.incrementIndex();
+    this->selectCurrentFindResult();
 }
 
 
@@ -495,22 +540,41 @@ void MainWindow::on_findAllButton_clicked()
         return;
     }
 
-    int pos = text.find(textToFind);
+    bool matchCase = this->findModel.matchCase;
+    bool wholeWord = this->findModel.wholeWord;
+    bool findRunning = true;
+    auto findPos = text.begin();
 
-    if (pos != std::string::npos)
-    {
-        this->findModel.append({pos, pos+textToFindLength});
-    }
+    auto searchPredicate =
+        [matchCase, wholeWord](unsigned char ch1, unsigned char ch2) {
+            if (matchCase)
+            {
+                return ch1 == ch2;
+            }
+            else
+            {
+                return std::tolower(ch1) == std::tolower(ch2);
+            }
+        };
 
-    while(pos != std::string::npos)
+    while (findPos < text.end())
     {
-        pos = text.find(textToFind, pos+1);
-        if (pos != std::string::npos)
+        auto it = std::search(
+            findPos, text.end(),
+            textToFind.begin(), textToFind.end(),
+            searchPredicate
+        );
+
+        auto pos = std::distance(text.begin(), it);
+        findPos = text.begin();
+        std::advance(findPos, pos + textToFindLength);
+
+        if (it != text.end())
         {
-            this->findModel.append({pos, pos+textToFindLength});
+            this->findModel.append({(int)pos, (int)pos + textToFindLength - 1});
+            std::cout << pos << std::endl;
         }
     }
-
 }
 
 
@@ -542,22 +606,17 @@ void MainWindow::on_actionFind_Replace_triggered()
 }
 
 
-void MainWindow::on_findTableVIew_doubleClicked(const QModelIndex &index)
+void MainWindow::on_findTableView_doubleClicked(const QModelIndex &index)
 {
-    FindResult *selectedFind = this->findModel.resultAt(index.row());
+    //this->findModel.currentResultIndex = index.row();
+    //this->selectCurrentFindResult();
+}
 
-    if (selectedFind != nullptr)
-    {
-        QList<QTextEdit::ExtraSelection> extraSelections;
-        QTextEdit::ExtraSelection extra;
-        extra.format.setBackground(Qt::red);
 
-        extra.cursor = this->ui->plainTextEdit->textCursor();
-        extra.cursor.setPosition(selectedFind->startPosition);
-        extra.cursor.select(QTextCursor::WordUnderCursor);
+void MainWindow::on_findTableView_activated(const QModelIndex &index)
+{
+    this->findModel.currentResultIndex = index.row();
+    this->selectCurrentFindResult();
 
-        extraSelections.append(extra);
-        this->ui->plainTextEdit->setExtraSelections(extraSelections);
-    }
 }
 

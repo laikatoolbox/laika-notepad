@@ -50,16 +50,72 @@ void FindModel::append(const FindResult &result)
 void FindModel::invalidate()
 {
     this->beginResetModel();
+    this->currentResultIndex = 0;
     this->findResults.clear();
     this->endResetModel();
 }
 
+
+void FindModel::incrementIndex()
+{
+    int maxIndex = std::max((int)this->findResults.count() - 1, 0);
+    int newIndex = this->currentResultIndex + 1;
+
+    if (newIndex > maxIndex)
+    {
+        if (this->wrapAround)
+        {
+            this->currentResultIndex = 0;
+        }
+        else
+        {
+            this->currentResultIndex = maxIndex;
+        }
+    }
+    else
+    {
+        this->currentResultIndex = newIndex;
+    }
+}
+
+void FindModel::decrementIndex()
+{
+    int maxIndex = std::max((int)this->findResults.count() - 1, 0);
+    int newIndex = this->currentResultIndex - 1;
+
+    if (newIndex < 0)
+    {
+        if (this->wrapAround)
+        {
+            this->currentResultIndex = maxIndex;
+        }
+        else
+        {
+            this->currentResultIndex = 0;
+        }
+    }
+    else
+    {
+        this->currentResultIndex = newIndex;
+    }
+}
+
 FindResult* FindModel::resultAt(int row)
 {
-    if (this->findResults.length() > row)
+    if (row >= 0 && this->findResults.length() > row)
     {
         return &(this->findResults[row]);
     }
 
     return nullptr;
+}
+
+FindResult* FindModel::currentResult()
+{
+    return this->resultAt(currentResultIndex);
+}
+
+int FindModel::count()
+{
+    return this->findResults.count();
 }

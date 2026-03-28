@@ -103,7 +103,9 @@ private slots:
 
     void on_actionFind_Replace_triggered();
 
-    void on_findTableVIew_doubleClicked(const QModelIndex &index);
+    void on_findTableView_doubleClicked(const QModelIndex &index);
+
+    void on_findTableView_activated(const QModelIndex &index);
 
 private:
     Ui::MainWindow *ui;
@@ -126,5 +128,6 @@ private:
     void updateWindowTitle();
     void clearFileName();
     void setFileName(QString &fileName);
+    void selectCurrentFindResult();
 };
 #endif // MAINWINDOW_H
