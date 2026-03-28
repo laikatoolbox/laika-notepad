@@ -296,7 +296,9 @@ void MainWindow::selectCurrentFindResult()
         extra.format.setBackground(Qt::red);
         extra.cursor = this->ui->plainTextEdit->textCursor();
         extra.cursor.setPosition(std::min(selectedFind->startPosition, textLength - 1));
-        extra.cursor.select(QTextCursor::SelectionType::WordUnderCursor);
+        int distance = selectedFind->endPosition - selectedFind->startPosition;
+        extra.cursor.movePosition(QTextCursor::MoveOperation::NextCharacter, QTextCursor::MoveMode::KeepAnchor, distance + 1);
+        //extra.cursor.select(QTextCursor::SelectionType::WordUnderCursor);
         extraSelections.append(extra);
         this->ui->plainTextEdit->setExtraSelections(extraSelections);
 
@@ -575,6 +577,8 @@ void MainWindow::on_findAllButton_clicked()
             std::cout << pos << std::endl;
         }
     }
+
+    this->ui->plainTextEdit->extraSelections().clear();
 }
 
 
@@ -618,5 +622,17 @@ void MainWindow::on_findTableView_activated(const QModelIndex &index)
     this->findModel.currentResultIndex = index.row();
     this->selectCurrentFindResult();
 
+}
+
+
+void MainWindow::on_matchCaseCheckBox_checkStateChanged(const Qt::CheckState &arg1)
+{
+    this->findModel.matchCase = this->ui->matchCaseCheckBox->isChecked();
+}
+
+
+void MainWindow::on_wholeWordCheckBox_checkStateChanged(const Qt::CheckState &arg1)
+{
+    this->findModel.wholeWord = this->ui->wholeWordCheckBox->isChecked();
 }
 

@@ -107,6 +107,10 @@ private slots:
 
     void on_findTableView_activated(const QModelIndex &index);
 
+    void on_matchCaseCheckBox_checkStateChanged(const Qt::CheckState &arg1);
+
+    void on_wholeWordCheckBox_checkStateChanged(const Qt::CheckState &arg1);
+
 private:
     Ui::MainWindow *ui;
     QString fileName = "";
