@@ -7,7 +7,7 @@ int FindModel::rowCount(const QModelIndex &) const
 
 int FindModel::columnCount(const QModelIndex &) const
 {
-    return 2;
+    return 3;
 }
 
 QVariant FindModel::data(const QModelIndex &index, int role) const
@@ -17,8 +17,10 @@ QVariant FindModel::data(const QModelIndex &index, int role) const
 
     switch (index.column()) {
     case 0:
-        return findResult.startPosition;
+        return findResult.linePosition;
     case 1:
+        return findResult.startPosition;
+    case 2:
         return findResult.endPosition;
     default:
         return {};
@@ -32,8 +34,10 @@ QVariant FindModel::headerData(int section, Qt::Orientation orientation, int rol
     switch (section)
     {
     case 0:
-        return "Start";
+        return "Line";
     case 1:
+        return "Start";
+    case 2:
         return "End";
     default:
         return {};

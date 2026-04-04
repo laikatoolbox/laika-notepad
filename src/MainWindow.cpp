@@ -3,6 +3,7 @@
 #include "AboutDialog.h"
 #include "SettingsDialog.h"
 #include "TextStats.h"
+#include "settings/Sputnik.h"
 #include <QFuture>
 #include <QtConcurrent>
 #include <QLocale>
@@ -533,9 +534,11 @@ void MainWindow::on_findNextButton_clicked()
 void MainWindow::on_findAllButton_clicked()
 {
     this->findModel.invalidate();
-    std::string textToFind = this->ui->findLineEdit->text().toStdString();
-    std::string text = this->ui->plainTextEdit->toPlainText().toStdString();
+    QString textToFind = this->ui->findLineEdit->text();
+    QString text = this->ui->plainTextEdit->toPlainText();
+
     int textToFindLength = textToFind.length();
+    int maxCharFindLength = textToFindLength - 1;
 
     if (textToFindLength == 0)
     {
@@ -544,8 +547,77 @@ void MainWindow::on_findAllButton_clicked()
 
     bool matchCase = this->findModel.matchCase;
     bool wholeWord = this->findModel.wholeWord;
+
+    if (!matchCase)
+    {
+        textToFind = textToFind.toLower();
+        text = text.toLower();
+        //std::transform(textToFind.begin(), textToFind.end(), textToFind.begin(), ::toupper);
+        //std::transform(text.begin(), text.end(), text.begin(), ::toupper);
+    }
+
     bool findRunning = true;
-    auto findPos = text.begin();
+\
+    int linePos = 0;
+    int wordPos = 0;
+
+    int startOfMatchSoFar = -1;
+    int characterInMatchSoFar = 0;
+    QChar prevChar = '\0';
+    QChar curChar = '\0';
+
+    for (int i = 0; i < text.size(); ++i)
+    {
+        curChar = text.at(i);
+        bool isNewLine = curChar == '\n';
+        bool isWhitespace = curChar.isSpace();
+        bool isPunctuation = curChar.isPunct();
+
+        if (isNewLine)
+        {
+            linePos++;
+            prevChar = curChar;
+            startOfMatchSoFar = -1;
+            characterInMatchSoFar = 0;
+            continue;
+        }
+
+        if (startOfMatchSoFar == -1 && curChar == textToFind[0])
+        {
+            startOfMatchSoFar = i;
+        }
+
+        // we are currently inside a match, running character by character
+        if (startOfMatchSoFar != -1)
+        {
+            // check if the current char matches the relative character in the text to find
+            if (characterInMatchSoFar < textToFindLength
+                && curChar == textToFind[characterInMatchSoFar])
+            {
+                // everything has matched and we've reached the end, so add result and reset
+                if (characterInMatchSoFar == maxCharFindLength)
+                {
+                    this->findModel.append({linePos + 1, startOfMatchSoFar, i});
+                    startOfMatchSoFar = -1;
+                    characterInMatchSoFar = 0;
+                }
+                else
+                {
+                    characterInMatchSoFar++;
+                }
+
+            }
+            else // character doesn't match so reset
+            {
+                startOfMatchSoFar = -1;
+                characterInMatchSoFar = 0;
+            }
+        }
+
+        prevChar = curChar;
+    }
+
+    /*auto findPos = text.begin();
 
     auto searchPredicate =
         [matchCase, wholeWord](unsigned char ch1, unsigned char ch2) {
@@ -576,7 +648,7 @@ void MainWindow::on_findAllButton_clicked()
             this->findModel.append({(int)pos, (int)pos + textToFindLength - 1});
             std::cout << pos << std::endl;
         }
-    }
+    }*/
 
     this->ui->plainTextEdit->extraSelections().clear();
 }

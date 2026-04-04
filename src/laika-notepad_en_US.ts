@@ -397,12 +397,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.cpp" line="246"/>
+        <location filename="MainWindow.cpp" line="247"/>
         <source>modified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.cpp" line="252"/>
+        <location filename="MainWindow.cpp" line="253"/>
         <source>Untitled</source>
         <translation type="unfinished"></translation>
     </message>

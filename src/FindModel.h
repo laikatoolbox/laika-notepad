@@ -6,6 +6,7 @@
 class FindResult
 {
 public:
+    int linePosition;
     int startPosition;
     int endPosition;
 };
