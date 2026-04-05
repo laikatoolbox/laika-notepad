@@ -15,6 +15,12 @@ namespace LaikaNotepad {
         int getDefaultFontSize();
         void setSettings(LaikaSettings::SettingsStore *settings);
 
+        // from settings
+        bool showLineNumbers = true;
+        QBrush lineNumberBackgroundColorBrush = QBrush();
+        QPen currentLineNumberTextColorPen = QPen();
+        QPen lineNumberTextColorPen = QPen();
+
     protected:
         void resizeEvent(QResizeEvent *event) override;
         void keyPressEvent(QKeyEvent *event) override;
@@ -28,12 +34,6 @@ namespace LaikaNotepad {
         QWidget *lineNumberArea;
         int defaultFontSize = 0;
         int lineNumberPaddding = 3;
-
-        // from settings
-        bool showLineNumbers = true;
-        QBrush lineNumberBackgroundColorBrush = QBrush();
-        QPen currentLineNumberTextColorPen = QPen();
-        QPen lineNumberTextColorPen = QPen();
 
         static inline int numDigits(const int input) {
             return 1 + (input >= 1000000000) + (input >= 100000000) + (input >= 10000000) +

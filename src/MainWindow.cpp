@@ -109,6 +109,9 @@ void MainWindow::settingsChanged()
     ui->mainToolbar->setMovable(!this->settings->lockToolbars);
     ui->viewToolbar->setMovable(!this->settings->lockToolbars);
 
+    // redraw the highlight to match the theme
+    this->selectCurrentFindResult();
+
     if (manuallyRefreshedLabel != nullptr)
     {
         manuallyRefreshedLabel->setVisible(!this->settings->autoRefreshTextStats);
@@ -294,12 +297,12 @@ void MainWindow::selectCurrentFindResult()
         // highlight the find
         QList<QTextEdit::ExtraSelection> extraSelections;
         QTextEdit::ExtraSelection extra;
-        extra.format.setBackground(Qt::red);
+        extra.format.setBackground(this->ui->plainTextEdit->currentLineNumberTextColorPen.brush());
+        extra.format.setForeground(this->ui->plainTextEdit->lineNumberBackgroundColorBrush);
         extra.cursor = this->ui->plainTextEdit->textCursor();
         extra.cursor.setPosition(std::min(selectedFind->startPosition, textLength - 1));
         int distance = selectedFind->endPosition - selectedFind->startPosition;
         extra.cursor.movePosition(QTextCursor::MoveOperation::NextCharacter, QTextCursor::MoveMode::KeepAnchor, distance + 1);
-        //extra.cursor.select(QTextCursor::SelectionType::WordUnderCursor);
         extraSelections.append(extra);
         this->ui->plainTextEdit->setExtraSelections(extraSelections);
 
@@ -552,8 +555,6 @@ void MainWindow::on_findAllButton_clicked()
     {
         textToFind = textToFind.toLower();
         text = text.toLower();
-        //std::transform(textToFind.begin(), textToFind.end(), textToFind.begin(), ::toupper);
-        //std::transform(text.begin(), text.end(), text.begin(), ::toupper);
     }
 
     bool findRunning = true;
@@ -617,40 +618,13 @@ void MainWindow::on_findAllButton_clicked()
         prevChar = curChar;
     }
 
-    /*auto findPos = text.begin();
-
-    auto searchPredicate =
-        [matchCase, wholeWord](unsigned char ch1, unsigned char ch2) {
-            if (matchCase)
-            {
-                return ch1 == ch2;
-            }
-            else
-            {
-                return std::tolower(ch1) == std::tolower(ch2);
-            }
-        };
-
-    while (findPos < text.end())
-    {
-        auto it = std::search(
-            findPos, text.end(),
-            textToFind.begin(), textToFind.end(),
-            searchPredicate
-        );
-
-        auto pos = std::distance(text.begin(), it);
-        findPos = text.begin();
-        std::advance(findPos, pos + textToFindLength);
-
-        if (it != text.end())
-        {
-            this->findModel.append({(int)pos, (int)pos + textToFindLength - 1});
-            std::cout << pos << std::endl;
-        }
-    }*/
-
+    // clear highlights and select first result
     this->ui->plainTextEdit->extraSelections().clear();
+    if (this->findModel.count() > 0)
+    {
+        this->findModel.currentResultIndex = 0;
+        this->selectCurrentFindResult();
+    }
 }
 
 
