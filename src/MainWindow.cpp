@@ -12,6 +12,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QScrollBar>
+#include <QHeaderView>
 #include <algorithm>
 #include <iostream>
 
@@ -27,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     // set up undo/redo
     connect(ui->plainTextEdit, SIGNAL(undoAvailable(bool)), this, SLOT(undoAvailable(bool)));
+    connect(ui->plainTextEdit, SIGNAL(redoAvailable(bool)), this, SLOT(redoAvailable(bool)));
     connect(ui->plainTextEdit, SIGNAL(redoAvailable(bool)), this, SLOT(redoAvailable(bool)));
     this->ui->actionUndo->setEnabled(false);
     this->ui->actionRedo->setEnabled(false);
@@ -57,7 +59,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     this->settingsChanged();
     this->updateStats();
     this->updateWindowTitle();
+
     this->ui->findTableView->setModel(&this->findModel);
+    this->ui->findTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeMode::Interactive);
+    this->ui->findTableView->horizontalHeader()->resizeSections(QHeaderView::ResizeMode::ResizeToContents);
+
+    connect(this->ui->findTableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+            this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
+
+    viewportTimer = new QTimer(this);
+    connect(viewportTimer, SIGNAL(timeout()), this, SLOT(recalculateViewport()));
+    viewportTimer->start(1500);
+
 }
 
 MainWindow::~MainWindow()
@@ -274,28 +287,45 @@ void MainWindow::clearFileName()
     this->updateWindowTitle();
 }
 
-void MainWindow::selectCurrentFindResult()
+void MainWindow::clearExtraSelections()
 {
-    FindResult *selectedFind = this->findModel.resultAt(this->findModel.currentResultIndex);
+    QList<QTextEdit::ExtraSelection> extraSelections;
+    this->ui->plainTextEdit->setExtraSelections(extraSelections);
+}
+
+void MainWindow::selectCurrentFindResult(bool shouldReselect, bool moveCursorToPosition)
+{
+    std::vector<FindResult*> selectedFinds = this->findModel.currentResults();
+
     int textLength = this->ui->plainTextEdit->toPlainText().length();
 
-    if (textLength == 0)
+    if (textLength == 0 || selectedFinds.size() == 0)
     {
-        this->ui->plainTextEdit->extraSelections().clear();
+        this->clearExtraSelections();
         return;
     }
 
-    if (selectedFind != nullptr)
-    {
-        // Move the cursor to the position of the find
-        QTextCursor newCursor = QTextCursor(this->ui->plainTextEdit->textCursor());
-        newCursor.setPosition(std::min(selectedFind->endPosition, textLength - 1));
-        this->ui->plainTextEdit->setTextCursor(newCursor);
-        this->ui->plainTextEdit->moveCursor(QTextCursor::MoveOperation::NextCharacter);
-        this->ui->plainTextEdit->ensureCursorVisible();
+    this->recalculateViewport();
 
-        // highlight the find
-        QList<QTextEdit::ExtraSelection> extraSelections;
+    // Show the results that are in the currently visible text
+    QList<QTextEdit::ExtraSelection> extraSelections;
+    for(const FindResult* selectedFind : selectedFinds)
+    {
+        if (extraSelections.count() > 0 && (selectedFind->endPosition > this->viewportEnd || selectedFind->startPosition < this->viewportStart))
+        {
+            continue;
+        }
+
+        // Move the cursor to the position of the find, if needed
+        if (moveCursorToPosition)
+        {
+            QTextCursor newCursor = QTextCursor(this->ui->plainTextEdit->textCursor());
+            newCursor.setPosition(std::min(selectedFind->endPosition, textLength - 1));
+            this->ui->plainTextEdit->setTextCursor(newCursor);
+            this->ui->plainTextEdit->moveCursor(QTextCursor::MoveOperation::NextCharacter);
+        }
+
+        // Highlight the find
         QTextEdit::ExtraSelection extra;
         extra.format.setBackground(this->ui->plainTextEdit->currentLineNumberTextColorPen.brush());
         extra.format.setForeground(this->ui->plainTextEdit->lineNumberBackgroundColorBrush);
@@ -304,17 +334,23 @@ void MainWindow::selectCurrentFindResult()
         int distance = selectedFind->endPosition - selectedFind->startPosition;
         extra.cursor.movePosition(QTextCursor::MoveOperation::NextCharacter, QTextCursor::MoveMode::KeepAnchor, distance + 1);
         extraSelections.append(extra);
-        this->ui->plainTextEdit->setExtraSelections(extraSelections);
 
-        // Focus the text edit
-        this->ui->plainTextEdit->setFocus();
-
-        // Make the selection match in the table
-        if (this->findModel.currentResultIndex < this->findModel.count()  && this->ui->findTableView->currentIndex().row() != this->findModel.currentResultIndex)
+        // Make the selection match in the table if we should reselect
+        if (shouldReselect && this->ui->findTableView->currentIndex().row() != selectedFind->resultPosition)
         {
-            this->ui->findTableView->selectRow(this->findModel.currentResultIndex);
+            this->ui->findTableView->selectRow(selectedFind->resultPosition);
         }
     }
+
+    this->ui->plainTextEdit->setExtraSelections(extraSelections);
+
+    if (moveCursorToPosition)
+    {
+        this->ui->plainTextEdit->ensureCursorVisible();
+    }
+
+    // Focus the text edit
+    this->ui->plainTextEdit->setFocus();
 }
 
 void MainWindow::on_actionNew_triggered()
@@ -561,6 +597,7 @@ void MainWindow::on_findAllButton_clicked()
 \
     int linePos = 0;
     int wordPos = 0;
+    int resultPos = 0;
 
     int startOfMatchSoFar = -1;
     int characterInMatchSoFar = 0;
@@ -596,9 +633,10 @@ void MainWindow::on_findAllButton_clicked()
                 && curChar == textToFind[characterInMatchSoFar])
             {
                 // everything has matched and we've reached the end, so add result and reset
-                if (characterInMatchSoFar == maxCharFindLength)
+                if (characterInMatchSoFar >= maxCharFindLength)
                 {
-                    this->findModel.append({linePos + 1, startOfMatchSoFar, i});
+                    this->findModel.append({resultPos, linePos + 1, startOfMatchSoFar, i});
+                    resultPos++;
                     startOfMatchSoFar = -1;
                     characterInMatchSoFar = 0;
                 }
@@ -619,16 +657,22 @@ void MainWindow::on_findAllButton_clicked()
     }
 
     // clear highlights and select first result
-    this->ui->plainTextEdit->extraSelections().clear();
+    this->clearExtraSelections();
     if (this->findModel.count() > 0)
     {
-        this->findModel.currentResultIndex = 0;
+        this->findModel.currentResultIndices = {0};
         this->selectCurrentFindResult();
     }
+
+    this->ui->findTableView->horizontalHeader()->resizeSections(QHeaderView::ResizeMode::Stretch);
 }
 
+void MainWindow::onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    this->selectSelectedFinds();
+}
 
-void MainWindow::on_replaceNextButton_clicked()
+void MainWindow::on_replaceSelectedButtonButton_clicked()
 {
 
 }
@@ -665,11 +709,8 @@ void MainWindow::on_findTableView_doubleClicked(const QModelIndex &index)
 
 void MainWindow::on_findTableView_activated(const QModelIndex &index)
 {
-    this->findModel.currentResultIndex = index.row();
-    this->selectCurrentFindResult();
 
 }
-
 
 void MainWindow::on_matchCaseCheckBox_checkStateChanged(const Qt::CheckState &arg1)
 {
@@ -682,3 +723,64 @@ void MainWindow::on_wholeWordCheckBox_checkStateChanged(const Qt::CheckState &ar
     this->findModel.wholeWord = this->ui->wholeWordCheckBox->isChecked();
 }
 
+
+void MainWindow::on_clearResultsButton_clicked()
+{
+    this->findModel.invalidate();
+    this->selectCurrentFindResult();
+    this->clearExtraSelections();
+    this->ui->findTableView->horizontalHeader()->resizeSections(QHeaderView::ResizeMode::Stretch);
+}
+
+void MainWindow::on_clearSelectionButton_clicked()
+{
+    this->ui->findTableView->selectionModel()->clearSelection();
+}
+
+
+void MainWindow::on_selectAllButton_clicked()
+{
+    this->isSelectingAll = true;
+    this->ui->findTableView->selectAll();
+    this->findModel.selectAll();
+    this->isSelectingAll = false;
+    this->selectCurrentFindResult(false);
+}
+
+void MainWindow::selectSelectedFinds()
+{
+    if (!this->isSelectingAll)
+    {
+        const QModelIndexList &selectedIndices = this->ui->findTableView->selectionModel()->selectedIndexes();
+        std::vector<int> selectedFindIndices = {};
+        for (int i = 0; i < selectedIndices.size(); i++)
+        {
+            selectedFindIndices.push_back(selectedIndices[i].row());
+        }
+
+        this->findModel.currentResultIndices = selectedFindIndices;
+        this->selectCurrentFindResult(false);
+    }
+}
+
+void MainWindow::recalculateViewport()
+{
+    if (this->findModel.currentResultIndices.size() == 0)
+    {
+        // we don't care about this if we're not trying to find any text
+        return;
+    }
+
+    int oldViewportStart = this->viewportStart;
+    int oldViewportEnd = this->viewportEnd;
+
+    this->viewportEnd = this->ui->plainTextEdit->cursorForPosition(QPoint(0, 0)).position();
+    QPoint bottomRight(this->ui->plainTextEdit->viewport()->width() - 1, this->ui->plainTextEdit->viewport()->height() - 1);
+    this->viewportEnd = this->ui->plainTextEdit->cursorForPosition(bottomRight).position();
+
+    // if the viewport has changed, we want to reselect the finds
+    if (this->viewportStart != oldViewportStart || this->viewportEnd != oldViewportEnd)
+    {
+        this->selectCurrentFindResult(false, false);
+    }
+}

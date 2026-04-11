@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QLabel>
 #include <QPushButton>
+#include <QItemSelection>
 #include <settings/SettingsStore.h>
 #include <FindModel.h>
 
@@ -97,7 +98,7 @@ private slots:
 
     void on_findAllButton_clicked();
 
-    void on_replaceNextButton_clicked();
+    void on_replaceSelectedButtonButton_clicked();
 
     void on_replaceAllButton_clicked();
 
@@ -111,6 +112,16 @@ private slots:
 
     void on_wholeWordCheckBox_checkStateChanged(const Qt::CheckState &arg1);
 
+    void on_clearResultsButton_clicked();
+
+    void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+
+    void on_clearSelectionButton_clicked();
+
+    void on_selectAllButton_clicked();
+
+    void recalculateViewport();
+
 private:
     Ui::MainWindow *ui;
     QString fileName = "";
@@ -121,6 +132,7 @@ private:
     QLabel *characterCountNumberLabel = nullptr;
     QLabel *wordCountLabel = nullptr;
     QLabel *wordCountNumberLabel = nullptr;
+    bool isSelectingAll = false;
     void settingsChanged();
     void updateStats();
     void newDocument();
@@ -132,6 +144,13 @@ private:
     void updateWindowTitle();
     void clearFileName();
     void setFileName(QString &fileName);
-    void selectCurrentFindResult();
+    void clearExtraSelections();
+    void selectCurrentFindResult(bool shouldReselect = true, bool moveCursorToPosition = true);
+    void selectSelectedFinds();
+
+    // keep track of the current viewport
+    QTimer* viewportTimer = nullptr;
+    int viewportStart = 0;
+    int viewportEnd = 0;
 };
 #endif // MAINWINDOW_H

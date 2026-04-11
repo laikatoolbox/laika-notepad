@@ -34,7 +34,7 @@ QVariant FindModel::headerData(int section, Qt::Orientation orientation, int rol
     switch (section)
     {
     case 0:
-        return "Line";
+        return "Line #";
     case 1:
         return "Start";
     case 2:
@@ -54,59 +54,88 @@ void FindModel::append(const FindResult &result)
 void FindModel::invalidate()
 {
     this->beginResetModel();
-    this->currentResultIndex = 0;
+    this->currentResultIndices = {};
     this->findResults.clear();
     this->endResetModel();
 }
 
+void FindModel::selectAll()
+{
+    this->currentResultIndices.clear();
+    for (int i=0; i<this->findResults.size(); i++)
+    {
+        this->currentResultIndices.push_back(i);
+    }
+}
+
+int FindModel::firstSelectedIndex()
+{
+    if (this->currentResultIndices.size() > 0)
+    {
+        return this->currentResultIndices[0];
+    }
+
+    return -1;
+}
 
 void FindModel::incrementIndex()
 {
-    int maxIndex = std::max((int)this->findResults.count() - 1, 0);
-    int newIndex = this->currentResultIndex + 1;
+    int curIndex = this->firstSelectedIndex();
 
-    if (newIndex > maxIndex)
+    if (curIndex != -1)
     {
-        if (this->wrapAround)
+        int maxIndex = std::max((int)this->findResults.count() - 1, 0);
+        int newIndex = curIndex + 1;
+
+        if (newIndex > maxIndex)
         {
-            this->currentResultIndex = 0;
+            if (this->wrapAround)
+            {
+                this->currentResultIndices = {0};
+            }
+            else
+            {
+                this->currentResultIndices = {maxIndex};
+            }
         }
         else
         {
-            this->currentResultIndex = maxIndex;
+            this->currentResultIndices = {newIndex};
         }
-    }
-    else
-    {
-        this->currentResultIndex = newIndex;
     }
 }
 
 void FindModel::decrementIndex()
 {
-    int maxIndex = std::max((int)this->findResults.count() - 1, 0);
-    int newIndex = this->currentResultIndex - 1;
+    int curIndex = this->firstSelectedIndex();
 
-    if (newIndex < 0)
+    if (curIndex != -1)
     {
-        if (this->wrapAround)
+        int maxIndex = std::max((int)this->findResults.count() - 1, 0);
+        int newIndex = curIndex - 1;
+
+        if (newIndex < 0)
         {
-            this->currentResultIndex = maxIndex;
+            if (this->wrapAround)
+            {
+                this->currentResultIndices = {maxIndex};
+            }
+            else
+            {
+                this->currentResultIndices = {0};
+            }
         }
         else
         {
-            this->currentResultIndex = 0;
+            this->currentResultIndices = {newIndex};
         }
-    }
-    else
-    {
-        this->currentResultIndex = newIndex;
     }
 }
 
 FindResult* FindModel::resultAt(int row)
 {
-    if (row >= 0 && this->findResults.length() > row)
+    int findResultCount = this->findResults.length();
+    if (row >= 0 && findResultCount > 0 && findResultCount > row)
     {
         return &(this->findResults[row]);
     }
@@ -114,9 +143,21 @@ FindResult* FindModel::resultAt(int row)
     return nullptr;
 }
 
-FindResult* FindModel::currentResult()
+std::vector<FindResult*> FindModel::currentResults()
 {
-    return this->resultAt(currentResultIndex);
+    std::vector<FindResult*> results = {};
+
+    for (const int& i : this->currentResultIndices)
+    {
+        FindResult *currentResult = this->resultAt(i);
+
+        if (currentResult != nullptr)
+        {
+            results.push_back(currentResult);
+        }
+    }
+
+    return results;
 }
 
 int FindModel::count()
