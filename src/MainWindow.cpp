@@ -70,7 +70,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     viewportTimer = new QTimer(this);
     connect(viewportTimer, SIGNAL(timeout()), this, SLOT(recalculateViewport()));
     viewportTimer->start(1500);
-
 }
 
 MainWindow::~MainWindow()
@@ -129,6 +128,12 @@ void MainWindow::settingsChanged()
     {
         manuallyRefreshedLabel->setVisible(!this->settings->autoRefreshTextStats);
     }
+
+    // For some reason, dock widgets do not behave correctly
+    // when switching themes (dark vs light mode) and will still
+    // have random bits stuck in the old theme, but we can force
+    // QT to not be jank by forcing a style reload
+    this->setStyleSheet(styleSheet());
 }
 
 ///
@@ -311,6 +316,7 @@ void MainWindow::selectCurrentFindResult(bool shouldReselect, bool moveCursorToP
     QList<QTextEdit::ExtraSelection> extraSelections;
     for(const FindResult* selectedFind : selectedFinds)
     {
+        // Skip if not in the viewport
         if (extraSelections.count() > 0 && (selectedFind->endPosition > this->viewportEnd || selectedFind->startPosition < this->viewportStart))
         {
             continue;
@@ -598,13 +604,14 @@ void MainWindow::on_findAllButton_clicked()
     int linePos = 0;
     int wordPos = 0;
     int resultPos = 0;
+    const int totalChars = text.size();
 
     int startOfMatchSoFar = -1;
     int characterInMatchSoFar = 0;
     QChar prevChar = '\0';
     QChar curChar = '\0';
 
-    for (int i = 0; i < text.size(); ++i)
+    for (int i = 0; i < totalChars; ++i)
     {
         curChar = text.at(i);
         bool isNewLine = curChar == '\n';
@@ -774,9 +781,17 @@ void MainWindow::recalculateViewport()
     int oldViewportStart = this->viewportStart;
     int oldViewportEnd = this->viewportEnd;
 
-    this->viewportEnd = this->ui->plainTextEdit->cursorForPosition(QPoint(0, 0)).position();
+    this->viewportStart = this->ui->plainTextEdit->cursorForPosition(QPoint(0, 0)).position();
     QPoint bottomRight(this->ui->plainTextEdit->viewport()->width() - 1, this->ui->plainTextEdit->viewport()->height() - 1);
     this->viewportEnd = this->ui->plainTextEdit->cursorForPosition(bottomRight).position();
+
+    /*
+
+    TODO: rely entirely on the calculations coming from startOfFirstBlock() and endOfLastBlock() for maybe? better performance
+    std::cout << "From timer: " << this->viewportStart << " -> " << this->viewportEnd << std::endl;
+    std::cout << "From textbox: " << this->ui->plainTextEdit->startOfFirstBlock() << " -> " << this->ui->plainTextEdit->endOfLastBlock() << std::endl;
+
+    */
 
     // if the viewport has changed, we want to reselect the finds
     if (this->viewportStart != oldViewportStart || this->viewportEnd != oldViewportEnd)

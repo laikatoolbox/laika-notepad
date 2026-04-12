@@ -10,12 +10,21 @@ namespace LaikaNotepad {
 
     public:
         TextEdit(QWidget *parent = nullptr);
+        bool shouldCalculateBlocks = false;
         void lineNumberAreaPaintEvent(QPaintEvent *event);
         int lineNumberAreaWidth();
-        int getDefaultFontSize();
-        void setSettings(LaikaSettings::SettingsStore *settings);
+        int getDefaultFontSize();        
 
-        // from settings
+        // These two are the characters at the start and
+        // end of the blocks visible in the viewport.
+        // NOTE: The are calculated when doing line numbers and
+        // will return -1 if both showLineNumbers and
+        // shouldCalculateBlocks are false
+        int startOfFirstBlock();
+        int endOfLastBlock();
+
+        // user settings
+        void setSettings(LaikaSettings::SettingsStore *settings);
         bool showLineNumbers = true;
         QBrush lineNumberBackgroundColorBrush = QBrush();
         QPen currentLineNumberTextColorPen = QPen();
@@ -34,6 +43,10 @@ namespace LaikaNotepad {
         QWidget *lineNumberArea;
         int defaultFontSize = 0;
         int lineNumberPaddding = 3;
+
+        // calculated block stats
+        int startChar = -1;
+        int endChar = -1;
 
         static inline int numDigits(const int input) {
             return 1 + (input >= 1000000000) + (input >= 100000000) + (input >= 10000000) +

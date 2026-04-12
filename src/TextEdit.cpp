@@ -29,35 +29,46 @@ int LaikaNotepad::TextEdit::lineNumberAreaWidth()
     return space;
 }
 
-void LaikaNotepad::TextEdit::updateLineNumberAreaWidth(int newBlockCount) {
-    if (showLineNumbers) {
+void LaikaNotepad::TextEdit::updateLineNumberAreaWidth(int newBlockCount)
+{
+    if (showLineNumbers)
+    {
         setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
-    } else {
+    }
+    else
+    {
         setViewportMargins(0, 0, 0, 0);
     }
-
 }
 
 void LaikaNotepad::TextEdit::updateLineNumberArea(const QRect &rect, int dy)
 {
-    if (showLineNumbers) {
-        if (dy) {
+    if (showLineNumbers)
+    {
+        if (dy)
+        {
             lineNumberArea->scroll(0, dy);
-        } else {
+        }
+        else
+        {
             lineNumberArea->update(0, rect.y(), lineNumberArea->width(), rect.height());
         }
 
-        if (rect.contains(viewport()->rect())) {
+        if (rect.contains(viewport()->rect()))
+        {
             updateLineNumberAreaWidth(0);
         }
-    } else {
+    }
+    else
+    {
         setViewportMargins(0, 0, 0, 0);
     }
 }
 
 void LaikaNotepad::TextEdit::resizeEvent(QResizeEvent *e)
 {
-    if (showLineNumbers) {
+    if (showLineNumbers)
+    {
         QPlainTextEdit::resizeEvent(e);
         QRect cr = contentsRect();
         lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
@@ -66,45 +77,54 @@ void LaikaNotepad::TextEdit::resizeEvent(QResizeEvent *e)
 
 void LaikaNotepad::TextEdit::highlightCurrentLine()
 {
-    if (showLineNumbers) {
+    if (showLineNumbers)
+    {
         this->repaint();
     }
 }
 
 void LaikaNotepad::TextEdit::lineNumberAreaPaintEvent(QPaintEvent *event)
 {
-    if (showLineNumbers)
+    if (this->showLineNumbers || this->shouldCalculateBlocks)
     {
         QPainter painter(lineNumberArea);
-        painter.fillRect(event->rect(), this->lineNumberBackgroundColorBrush);
+        QFont font = painter.font();
+        if (this->showLineNumbers)
+        {
+            painter.fillRect(event->rect(), this->lineNumberBackgroundColorBrush);
+        }
 
         QTextBlock block = firstVisibleBlock();
+        // save the starting char position
+        this->startChar = block.position();
         int blockNumber = block.blockNumber();
         int top = qRound(blockBoundingGeometry(block).translated(contentOffset()).top());
         int bottom = top + qRound(blockBoundingRect(block).height());
-        QFont font = painter.font();
 
         while (block.isValid() && top <= event->rect().bottom())
         {
-            if (block.isVisible() && bottom >= event->rect().top())
+            if (this->showLineNumbers)
             {
-                QString number = QString::number(blockNumber + 1);
-                bool isCurrentBlock = this->textCursor().blockNumber() == blockNumber;
-                if (isCurrentBlock)
+                if (block.isVisible() && bottom >= event->rect().top())
                 {
-                    painter.setPen(this->currentLineNumberTextColorPen);
-                    font.setBold(true);
-                    painter.setFont(font);
-                }
-                else
-                {
-                    font.setBold(false);
-                    painter.setFont(font);
-                    painter.setPen(this->lineNumberTextColorPen);
-                }
+                    QString number = QString::number(blockNumber + 1);
+                    bool isCurrentBlock = this->textCursor().blockNumber() == blockNumber;
+                    if (isCurrentBlock)
+                    {
+                        painter.setPen(this->currentLineNumberTextColorPen);
+                        font.setBold(true);
+                        painter.setFont(font);
+                    }
+                    else
+                    {
+                        font.setBold(false);
+                        painter.setFont(font);
+                        painter.setPen(this->lineNumberTextColorPen);
+                    }
 
-                painter.drawText(0, top, lineNumberArea->width() - lineNumberPaddding, fontMetrics().height(),
-                                 Qt::AlignRight, number);
+                    painter.drawText(0, top, lineNumberArea->width() - lineNumberPaddding, fontMetrics().height(),
+                                     Qt::AlignRight, number);
+                }
             }
 
             block = block.next();
@@ -112,6 +132,9 @@ void LaikaNotepad::TextEdit::lineNumberAreaPaintEvent(QPaintEvent *event)
             bottom = top + qRound(blockBoundingRect(block).height());
             ++blockNumber;
         }
+
+        // save the ending char position
+        this->endChar = block.position() + block.length();
     }
 }
 
@@ -132,6 +155,30 @@ void LaikaNotepad::TextEdit::keyPressEvent(QKeyEvent *event)
 int LaikaNotepad::TextEdit::getDefaultFontSize()
 {
     return this->defaultFontSize;
+}
+
+int LaikaNotepad::TextEdit::startOfFirstBlock()
+{
+    if (this->shouldCalculateBlocks || this->showLineNumbers)
+    {
+        return this->startChar;
+    }
+
+
+    // we aren't calculating them right now
+    return -1;
+}
+
+int LaikaNotepad::TextEdit::endOfLastBlock()
+{
+    if (this->shouldCalculateBlocks || this->showLineNumbers)
+    {
+        return this->endChar;
+    }
+
+
+    // we aren't calculating them right now
+    return -1;
 }
 
 void LaikaNotepad::TextEdit::setSettings(LaikaSettings::SettingsStore *settings)

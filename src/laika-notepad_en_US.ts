@@ -422,12 +422,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.cpp" line="263"/>
+        <location filename="MainWindow.cpp" line="268"/>
         <source>modified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="MainWindow.cpp" line="269"/>
+        <location filename="MainWindow.cpp" line="274"/>
         <source>Untitled</source>
         <translation type="unfinished"></translation>
     </message>
